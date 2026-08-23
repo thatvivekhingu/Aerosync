@@ -1,0 +1,52 @@
+# AeroSync Cadastral AI Engine — Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# --- Core Deep Learning ---
+torch>=2.1.0
+torchvision>=0.16.0
+
+# --- Scientific Python ---
+numpy>=1.24.0
+scipy>=1.10.0
+
+# --- Computer Vision & Geospatial ---
+opencv-python>=4.8.0
+Pillow>=10.0.0
+tifffile>=2023.7.0
+shapely>=2.0.0
+
+# --- Geospatial Data ---
+rasterio>=1.3.0        # GeoTIFF I/O with CRS / transform metadata
+pyproj>=3.5.0          # Coordinate reference system transformations
+fiona>=1.9.0           # GeoJSON / shapefile I/O
+geopandas>=0.13.0      # Geospatial dataframes
+
+# --- Thin-structure / skeleton losses ---
+scikit-image>=0.21.0   # morphology.skeletonize (used in clDiceLoss)
+
+# --- Data Augmentation ---
+albumentations>=1.3.0
+
+# --- Experiment tracking ---
+# tensorboard>=2.13.0
+wandb>=0.15.0
+
+# --- ONNX export & inference ---
+onnx>=1.14.0
+onnxruntime>=1.15.0   # CPU inference; use onnxruntime-gpu for GPU deployment
+
+# --- Part 3: Pretrained backbones (needed when backbone != 'scratch') ---
+timm>=0.9.0            # ResNet34, ConvNeXt-Tiny, ViT encoders
+
+# --- Phase 4: Evaluation suite ---
+scikit-learn>=1.3.0    # confusion_matrix, KFold, calibration_curve, classification_report
+seaborn>=0.12.0        # heatmap visualisations (confusion matrix, per-class breakdowns)
+
+# --- Testing ---
+pytest>=7.4.0
+pytest-cov>=4.1.0      # coverage: pytest --cov=models tests/
+
+# --- Code quality ---
+black>=23.0.0
+isort>=5.12.0
+mypy>=1.5.0
