@@ -1,177 +1,139 @@
-# 🛰️ AeroSync — Cadastral AI Engine & Drone Parcel Mapping
+# 🛰️ AeroSync — Drone Drone Se Digital Zameen Ke Kagaz (SVAMITVA AI)
 
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.1%2B-ee4c2c.svg?logo=pytorch&logoColor=white)](https://pytorch.org/)
-[![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.13-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
-[![SVAMITVA](https://img.shields.io/badge/Mission-SVAMITVA%20Scheme-green.svg)](https://svamitva.nic.in/)
-[![Problem Statement](https://img.shields.io/badge/DoLR-Problem%20ID%2026012-orange.svg)](https://dolr.gov.in/)
-[![Tests](https://img.shields.io/badge/pytest-39%20passed-brightgreen.svg?logo=pytest&logoColor=white)](tests/)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-
-> **High-precision deep learning engine for automated cadastral land feature extraction, parcel polygonization, and ULPIN-compliant legal property card generation from high-resolution drone orthomosaics.**
+> **AeroSync** ek AI-powered system hai jo drone se li gayi gaon/zameen ki high-resolution photos (orthomosaics) ko scan karta hai, usme se **ghar (buildings), sadak (roads), talab (water), aur khet/ped (greenery)** ko pehchanta hai, aur seedha **legal land-record / property card (GeoJSON)** bana deta hai.
 
 ---
 
-## 📌 Project Overview
+## 🎯 Asal Problem Kya Hai? (Why AeroSync?)
 
-**AeroSync** is an end-to-end Computer Vision & Geospatial AI pipeline built for the **SVAMITVA Scheme** (*Survey of Villages and Mapping with Improvised Technology in Village Areas*), under the **Department of Land Resources (DoLR), Ministry of Rural Development, Government of India**.
+Bharat sarkar ki **SVAMITVA Scheme** ke tahat gaon ke gharon ki mapping drone se ho rahi hai. Par drone ki badi-badi images se manually har ek ghar aur boundary ko trace karna bohot slow, mehenga aur human errors se bhara kaam hai.
 
-The system ingests high-resolution (≤5 cm GSD) RGB drone surveys, segments semantic land cover classes, regularizes parcel geometries into legally sound rectangular footprints, estimates per-parcel uncertainty for surveyor verification, and exports GIS-ready GeoJSON layers keyed with Unique Land Parcel Identification Numbers (**ULPIN**).
-
----
-
-## 🚀 Key Modules & Completed Work (Features Implemented)
-
-### 1. 🧠 Core Neural Architectures (`models/model.py`)
-- **AeroSync Attention ResUNet + ASPP**:
-  - **Squeeze-and-Excitation (SE)** residual blocks for channel-wise feature recalibration.
-  - **Atrous Spatial Pyramid Pooling (ASPP)** with dilations (1, 6, 12, 18) and global average pooling for multi-scale context.
-  - **Spatial Attention Gates** on skip connections to suppress background noise and focus on parcel edges.
-  - **Group Normalization (GN)** (groups=8) for batch-size-agnostic stable training.
-  - **Deep Supervision**: Multi-scale auxiliary prediction heads at decoder levels.
-- **Pretrained Backbones Support**: Integrated `timm` encoders (`resnet34`, `convnext_tiny`, `vit`).
-
-### 2. 🎯 Boundary & Topology Loss Suite (`models/losses.py`)
-- **`AeroSyncTotalLoss`**: 4-term compound loss aligning training directly with cadastral evaluation criteria:
-  $$\mathcal{L}_{\text{total}} = w_{\text{focal}} \mathcal{L}_{\text{focal}} + w_{\text{dice}} \mathcal{L}_{\text{dice}} + w_{\text{boundary}} \mathcal{L}_{\text{boundary}} + w_{\text{cldice}} \mathcal{L}_{\text{cldice}}$$
-- **Boundary Loss (Kervadec et al.)**: Uses Euclidean Signed Distance Transforms (SDT) to enforce ultra-crisp parcel boundaries.
-- **clDice Loss (Centerline Dice)**: Preserves thin, topological road & corridor network connectivity.
-- **Focal + Multi-Class Dice Loss**: Addresses severe class imbalance across rural terrain.
-
-### 3. 🎨 Drone Data Augmentation Pipeline (`models/augmentation.py`, `models/data.py`)
-- Complete Albumentations pipeline: Random horizontal/vertical flips, 90° rotations, Affine scaling/shearing, Grid Distortion, Optical Distortion, and Color/Brightness Jitter.
-- **CutMix & MixUp** regularization for cadastral drone patches.
-- PyTorch `CadastralDroneDataset` with multi-worker loading, lazy caching, and robust RGB mask decoding.
-
-### 4. ⚡ Production Training Engine (`models/trainer.py`, `models/utils.py`)
-- **Automatic Mixed Precision (AMP)** via PyTorch `torch.cuda.amp` (FP16 / BF16).
-- **Model EMA (Exponential Moving Average)** with customizable decay (0.9999) for stable weights.
-- **Differential Learning Rates**: 0.1× LR for pretrained backbones with gradual warmup.
-- **Gradient Clipping & Cosine Annealing Learning Rate Schedules**.
-- **Weights & Biases (WandB)** and local CSV metric logging.
-
-### 5. 🔬 Uncertainty Quantification & Inference (`models/uncertainty.py`, `models/inference.py`)
-- **Monte Carlo (MC) Dropout**: Epistemic uncertainty estimation to highlight ambiguous property boundaries for surveyor field verification.
-- **Test-Time Augmentation (TTA)**: Multi-flip and 4-way rotation averaging for maximum precision.
-- **ONNX Export**: End-to-end export to `.onnx` for lightweight edge deployment and TensorRT acceleration.
-
-### 6. 🗺️ Large-Scale GeoTIFF Tiling & Stitching (`3_AeroSync_Large_GeoTIFF_Tiling_and_Stitching.ipynb`)
-- Tiling gigapixel orthomosaics with configurable stride and overlap (e.g. 512×512 with 64px overlap).
-- **Cosine/Gaussian Weighted Blending** to eliminate boundary seam artifacts across adjacent inference tiles.
-- CRS (Coordinate Reference System) & geospatial transform preservation via `rasterio`.
-
-### 7. 📐 Vectorization & Geometry Regularization (`models/geometry.py`)
-- **Raster to GeoJSON Conversion**: Contour extraction with topological hierarchy preservation.
-- **Douglas-Peucker Simplification**: Removes noisy vertices from drone raster boundaries.
-- **Orthogonalization Algorithm**: Snaps nearly perpendicular building corners to exact 90° angles to match architectural standards.
-- **ULPIN Generation**: Generates official `IN-SVAMITVA-XXXX-XXXX-NNN` property identifiers with area ($\text{m}^2$) and perimeter metrics.
-
-### 8. 📊 Comprehensive Evaluation & Test Suite (`tests/`, `4_AeroSync_...ipynb`)
-- **39 Automated PyTest Unit Tests** covering models, losses, trainer, geometry, uncertainty, and dataset loaders.
-- Detailed metrics: Mean IoU, Dice Score, Boundary F1 Score, and Hausdorff Distance (px).
+**AeroSync is pure process ko automate karta hai:**
+1. Drone image daalo
+2. AI pixel-by-pixel sab kuch segment karega
+3. Tedhi-medhi AI lines ko seedhi rectangular property boundaries me convert karega
+4. Har property ko ek unique **ULPIN ID** (zameen ka Aadhaar number) aur area/perimeter assign karega
+5. Jis boundary me AI ko thoda doubt ho, uspar **"Surveyor Verification Needed"** flag laga dega
 
 ---
 
-## 📂 Repository Structure
+## 🛠️ Ab Tak Kya-Kya Kaam Ho Chuka Hai? (What's Built So Far)
+
+Humne is project ko modular tarike se 8 main parts me build kiya hai:
+
+### 1. 🧠 Custom AI Model (`models/model.py`)
+- **Attention ResUNet + ASPP Architecture**: Drone images me chote ghar aur lambi patli sadakon ko dhyan se dekhne ke liye attention gates aur multi-scale zoom layers lagayi hain.
+- **Pretrained Encoders**: ResNet-34 aur ConvNeXt jaise modern vision backbones bhi support karta hai.
+
+### 2. 🎯 Smart Multi-Loss Training (`models/losses.py`)
+- Normal AI segmentation models me gharon ke kone gol-matol (blurry) ho jate hain.
+- Isko theek karne ke liye **Boundary Loss** (sharp edges ke liye) aur **clDice Loss** (sadak ki continuity tootne na paye) add kiya hai.
+
+### 3. 📸 Drone Data Augmentation (`models/augmentation.py`)
+- Drone alag-alag unchai, dhoop-chaon aur angle se photo leta hai.
+- Isliye humne Albumentations se rotation, brightness change, zoom, aur CutMix jaise realistic drone filters add kiye hain taaki model robust rahe.
+
+### 4. ⚡ Fast & Stable Training Engine (`models/trainer.py`)
+- **Mixed Precision (AMP)**: GPU par training fast aur low memory me hoti hai.
+- **Model EMA**: Weights ko smooth rakhne ke liye taaki best performance mile.
+- **WandB Tracking**: Training loss aur charts track karne ka pura setup.
+
+### 5. 🔍 AI Confidence & Doubt Checker (`models/uncertainty.py`)
+- AI andha dhundh prediction nahi deta — **Monte Carlo Dropout** se har parcel ka *confidence score* nikalta hai.
+- Agar kisi ped ke neeche ghar chupa hai aur AI sure nahi hai, toh wo use surveyor ke physically check karne ke liye mark kar deta hai.
+
+### 6. 🗺️ Badi GeoTIFF Photos ko Process Karna (`3_AeroSync_...ipynb`)
+- Drone maps kayi GBs ke hote hain jo ek baar me memory me fit nahi aate.
+- Humne smart tiler banaya hai jo badi image ke 512×512 ke tukde (tiles) banata hai aur smoothly stitch karta hai bina kisi border line ke.
+
+### 7. 📐 AI Mask Se Clean Cadastral Polygons (`models/geometry.py`)
+- AI ke rough pixel mask ko clean **vector GeoJSON polygons** me convert karta hai.
+- **Orthogonalization**: Ghar ke kono ko 90 degree par seedha karta hai taaki wo naksha legally accurate lage.
+- **ULPIN Auto-Generation**: Har property card ko legal ID aur area calculate karke deta hai.
+
+### 8. 🧪 Testing & Validation (`tests/`)
+- **39 PyTest Unit Tests** likhe hain jo har loss function, model layer, aur dataset pipeline ko test karte hain (All 39 passing ✅).
+
+---
+
+## 📂 Project Structure (Kaunsi File Kya Karti Hai)
 
 ```
 AeroSync/
-├── 1_AeroSync_Cadastral_Model_Training_and_Inference.ipynb   # Main training & inference workflow
-├── 2_AeroSync_Building_Footprint_Extraction_Binary.ipynb    # High-precision building mask extractor
-├── 3_AeroSync_Large_GeoTIFF_Tiling_and_Stitching.ipynb       # Gigapixel GeoTIFF tiler & blender
-├── 4_AeroSync_Cadastral_Quality_and_Accuracy_Evaluation.ipynb# Accuracy, Boundary F1 & Hausdorff metrics
-├── models/
-│   ├── __init__.py          # Public API exports
-│   ├── augmentation.py      # Albumentations & CutMix drone pipelines
-│   ├── constants.py         # SVAMITVA class definitions & color palettes
-│   ├── data.py              # PyTorch Dataset, samplers & dataloaders
-│   ├── geometry.py          # Vectorization, Douglas-Peucker & Orthogonalization
-│   ├── losses.py            # FocalDice, BoundaryLoss, clDice & AeroSyncTotalLoss
-│   ├── model.py             # Attention ResUNet, ASPP, CBAM & Backbones
-│   ├── trainer.py           # AMP, EMA, WandB, differential LR training engine
-│   ├── uncertainty.py       # MC Dropout & Test-Time Augmentation (TTA)
-│   └── utils.py             # Config dataclasses, seeds, metrics, checkpointing
+│
+├── 1_AeroSync_Cadastral_Model_Training_and_Inference.ipynb   # Main notebook: Model training aur testing
+├── 2_AeroSync_Building_Footprint_Extraction_Binary.ipynb    # Sirf gharon (buildings) ke footprints nikalne ke liye
+├── 3_AeroSync_Large_GeoTIFF_Tiling_and_Stitching.ipynb       # Badi gigapixel drone maps ko tile aur stitch karne ke liye
+├── 4_AeroSync_Cadastral_Quality_and_Accuracy_Evaluation.ipynb# Accuracy, IoU, Dice aur boundary quality check karne ke liye
+│
+├── models/                         # Core Python Library
+│   ├── model.py                    # AI Architectures (Attention ResUNet, ASPP)
+│   ├── losses.py                   # Loss functions (Focal, Dice, Boundary, clDice)
+│   ├── trainer.py                  # PyTorch model training pipeline
+│   ├── data.py                     # Dataset loader aur batching
+│   ├── augmentation.py             # Drone image transformations
+│   ├── geometry.py                 # Polygon cleaning, 90° straightening & GeoJSON
+│   ├── uncertainty.py              # Confidence & doubt quantification
+│   ├── constants.py                # Class names aur colors
+│   └── utils.py                    # Configurations aur helper functions
+│
 ├── tests/
-│   └── test_aerosync.py     # 39 unit & integration tests (PyTest)
-├── MODEL_CARD.md            # Comprehensive AI governance & model card
-├── requirements.txt         # Core dependencies (PyTorch, Albumentations, etc.)
-└── README.md                # Project documentation
+│   └── test_aerosync.py            # Automated tests (39 passed)
+│
+├── requirements.txt                # Required libraries list
+└── README.md                       # Documentation
 ```
 
 ---
 
-## 🎨 Semantic Land Classes
+## 🎨 AI Classes (Model Kya-Kya Pehchanta Hai)
 
-| ID | Class Name | Representation | Color (RGB) | Hex Code |
-|:--:|:-----------|:---------------|:------------|:---------|
-| `0` | **Background** | Open terrain, barren soil | `(40, 44, 52)` | `#282C34` |
-| `1` | **Building** | Residential & commercial structures | `(255, 165, 0)` | `#FFA500` |
-| `2` | **Road** | Paved roads, village corridors | `(255, 255, 0)` | `#FFFF00` |
-| `3` | **Water** | Ponds, rivers, canals | `(0, 150, 255)` | `#0096FF` |
-| `4` | **Greenery** | Agricultural vegetation, trees | `(34, 139, 34)` | `#228B22` |
+| Class | Naam | Rang (Color) |
+|---|---|---|
+| **0** | Background | Khali zameen / mitti |
+| **1** | Building | Ghar, dukan, kachha/pakka makaan |
+| **2** | Road | Sadak, galiyan, raste |
+| **3** | Water | Talab, nala, nadi |
+| **4** | Greenery | Khet, ped-paudhe, ghaas |
 
 ---
 
-## 🛠️ Quick Start
+## 🚀 Kaise Run Karein? (Quick Start)
 
-### 1. Local Setup
-
+### Local Computer Par:
 ```bash
-# Clone the repository
+# 1. Repo clone karo
 git clone https://github.com/thatvivekhingu/Aerosync.git
 cd Aerosync
 
-# Create & activate a virtual environment
+# 2. Virtual environment banao aur activate karo
 python -m venv .venv
-# On Windows:
 .venv\Scripts\activate
-# On Linux/macOS:
-source .venv/bin/activate
 
-# Install dependencies
+# 3. Dependencies install karo
 pip install -r requirements.txt
 
-# Run test suite to verify installation
+# 4. Test run karke verify karo
 pytest tests/test_aerosync.py
 ```
 
-### 2. Google Colab / Cloud Notebooks
-
-Add this cell at the start of any Colab notebook:
-
+### Google Colab Par:
+Google Colab notebook ke top cell me sirf yeh 2 lines run karni hain:
 ```python
-# Clone repo & install requirements
 !git clone https://github.com/thatvivekhingu/Aerosync.git /content/AeroSync
 %cd /content/AeroSync
 !pip install -r requirements.txt
-
-# Verify import
-from models import AeroSyncAttentionResUNet, AeroSyncTotalLoss, mask_to_cadastral_geojson
-print("✅ AeroSync v2.0 ready!")
 ```
 
 ---
 
-## 📈 Benchmark Performance
+## 📊 Abhi Tak Ki Model Performance
 
-| Metric | Building | Road | Water | Greenery | Mean Score |
-|---|:---:|:---:|:---:|:---:|:---:|
-| **IoU** | **0.82** | **0.71** | **0.88** | **0.79** | **0.80** |
-| **Dice Score** | **0.90** | **0.83** | **0.94** | **0.88** | **0.89** |
-| **Boundary F1** | **0.78** | **0.68** | **0.85** | **0.74** | **0.76** |
-| **Hausdorff Distance** | ~4.2 px | ~6.1 px | ~3.8 px | ~5.0 px | ~4.8 px |
-
-*Evaluated on 512×512 drone survey orthomosaic patches at 3.5 cm GSD.*
+- **Building Segmentation**: ~90% Dice Score (Accurate building outlines)
+- **Mean IoU Across Classes**: ~80%
+- **Boundary Precision**: Sharp edges without ragged corners
 
 ---
 
-## 📜 Legal & Survey Compliance
-
-Model outputs are designed as high-efficiency decision-support tools for cadastral surveyors under the SVAMITVA guidelines. Every parcel generated includes an `uncertainty_score` and `confidence_score` enabling automated routing of ambiguous property boundaries for ground-truth physical verification.
-
----
-
-## 📄 License & Citations
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
-For model architecture details and governance, refer to the [MODEL_CARD.md](MODEL_CARD.md).
+## 📜 License
+MIT License. Open for development and research under DoLR / SVAMITVA initiatives.
