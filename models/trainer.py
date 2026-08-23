@@ -211,15 +211,31 @@ class AeroSyncTrainer:
         self.val_loader = val_loader
         self.device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+        # Ensure all optional attributes exist even if cfg was created with older version
+        for _attr, _default in {
+            "use_torch_compile": False,
+            "use_wandb": False,
+            "grad_accumulation_steps": 1,
+            "early_stopping_patience": 15,
+            "freeze_backbone_epochs": 5,
+            "experiment_name": "aerosync_v2_baseline",
+            "aux_weight": 0.35,
+            "gradient_clip_norm": 1.0,
+            "ema_decay": 0.9999,
+        }.items():
+            if not hasattr(self.cfg, _attr):
+                setattr(self.cfg, _attr, _default)
+
         set_seed(cfg.seed)
 
         # ---- Model setup ----
         self.model = model.to(self.device)
 
         # torch.compile (PyTorch ≥ 2.0)
-        if cfg.use_torch_compile and hasattr(torch, "compile"):
+        if getattr(cfg, "use_torch_compile", False) and hasattr(torch, "compile"):
             logger.info("Applying torch.compile(mode='reduce-overhead') ...")
             self.model = torch.compile(self.model, mode="reduce-overhead")
+
 
         # ---- Loss ----
         if cfg.loss_type == "total":
