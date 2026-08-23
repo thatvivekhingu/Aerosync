@@ -910,4 +910,10 @@ from .losses import (
     FocalDiceCadastralLoss,
     clDiceLoss,
 )
+from .geometry import (
+    mask_to_cadastral_geojson,
+    orthogonalize_polygon,
+    regularize_polygon,
+)
+
 
