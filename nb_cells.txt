@@ -150,9 +150,10 @@ print(f"[OK] AeroSync Attention ResUNet + ASPP Engine initialized ({total_params
 
 === Cell 14 ===
 from models import AeroSyncTrainer, TrainingConfig
+import dataclasses
 
-# ΓöÇΓöÇ Experiment config (edit here ΓÇö one place for all hyperparameters) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-cfg = TrainingConfig(
+# ── Experiment config (edit here — one place for all hyperparameters) ────────
+_config_kwargs = dict(
     experiment_name="aerosync_v2_baseline",
     num_epochs=50,
     batch_size=4,
@@ -177,6 +178,8 @@ cfg = TrainingConfig(
     num_classes=5,
     seed=42,
 )
+_valid_fields = {f.name for f in dataclasses.fields(TrainingConfig)}
+cfg = TrainingConfig(**{k: v for k, v in _config_kwargs.items() if k in _valid_fields})
 cfg.save(f"checkpoints/{cfg.experiment_name}_config.json")
 
 # ΓöÇΓöÇ Build model ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
