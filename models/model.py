@@ -901,3 +901,13 @@ class AeroSyncAttentionResUNet(nn.Module):
 
 # Backward-compatibility alias — identical to the original
 AeroSyncUNet = AeroSyncAttentionResUNet
+
+# Backward-compatibility re-exports for legacy imports (e.g. from models.model import FocalDiceCadastralLoss)
+from .losses import (
+    AeroSyncTotalLoss,
+    BoundaryLoss,
+    CombinedCadastralLoss,
+    FocalDiceCadastralLoss,
+    clDiceLoss,
+)
+

@@ -1,4 +1,4 @@
-﻿=== Cell 2 ===
+=== Cell 2 ===
 import sys, subprocess
 print('[OK] Dependencies ready.')
 
@@ -9,16 +9,43 @@ import matplotlib.pyplot as plt, matplotlib.patches as mpatches
 from PIL import Image
 import cv2, tifffile
 
-# ΓöÇΓöÇ AeroSync workspace resolver ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-_candidates = [os.getcwd(), r"C:\AeroSync", "/content/AeroSync",
-               "/content", "/kaggle/working"]
-workspace_dir = next(
-    (p for p in _candidates
-     if p and os.path.exists(p) and os.path.exists(os.path.join(p, "models"))),
+# ── AeroSync workspace resolver (Colab / Kaggle / Local Auto-Detection) ───────
+_candidates = [
     os.getcwd(),
+    r"C:\AeroSync",
+    "/content/AeroSync",
+    "/content",
+    "/kaggle/working/AeroSync",
+    "/kaggle/working",
+    os.path.abspath(".."),
+]
+
+workspace_dir = next(
+    (p for p in _candidates if p and os.path.exists(os.path.join(p, "models"))),
+    None,
 )
+
+# Auto-clone repository if running in Google Colab / Kaggle / isolated env
+if workspace_dir is None:
+    print("[INFO] 'models' module not found locally. Auto-cloning AeroSync repository...")
+    try:
+        subprocess.run(
+            ["git", "clone", "--depth", "1", "https://github.com/thatvivekhingu/AeroSync.git"],
+            check=True,
+        )
+        for _p in ["AeroSync", "/content/AeroSync", "/kaggle/working/AeroSync"]:
+            if os.path.exists(os.path.join(_p, "models")):
+                workspace_dir = os.path.abspath(_p)
+                break
+    except Exception as _e:
+        print(f"[WARNING] Could not auto-clone repository: {_e}")
+
+if workspace_dir is None:
+    workspace_dir = os.getcwd()
+
 if workspace_dir not in sys.path:
     sys.path.insert(0, workspace_dir)
+
 
 # ΓöÇΓöÇ Import upgraded AeroSync v2.0 modules ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 import torch

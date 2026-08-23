@@ -136,12 +136,18 @@ class TrainingConfig:
     scheduler: str = "cosine"         # "cosine" | "step" | "none"
     warmup_epochs: int = 5
 
-    # --- Training ---
+    # --- Training & Hardware Optimisation ---
     num_epochs: int = 100
     seed: int = 42
     mixed_precision: bool = True
     ema_decay: float = 0.9999         # 0.0 = disabled
     gradient_clip_norm: float = 1.0
+    grad_accumulation_steps: int = 1
+    use_torch_compile: bool = False
+    use_wandb: bool = False
+    wandb_project: str = "aerosync"
+    wandb_entity: Optional[str] = None
+    early_stopping_patience: int = 15
 
     # --- Inference ---
     mc_dropout_passes: int = 10
@@ -162,6 +168,7 @@ class TrainingConfig:
     experiment_name: str = "aerosync_v1"
     notes: str = ""
     extra: dict = field(default_factory=dict)
+
 
     def save(self, path: str | Path) -> None:
         """Serialise this config to a JSON file.
