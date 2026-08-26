@@ -10,15 +10,10 @@ Key design decisions:
   preserving cardinal edge orientations.
 - Heavy lighting augmentation: time-of-day variation and shadow are the #1
   confuser of Building vs Background in village drone surveys.
+- Rural Roof Material Heterogeneity: Specular glare (tin sheet), Terracotta hue
+  jitter (khaprail), and Tarpaulin hue shifts prevent false building rejections.
 - Shadow simulation: RandomShadow specifically addresses tree/building cast
   shadows that misclassify Road and Greenery pixels.
-
-Usage
------
->>> from models.augmentation import get_train_transforms, get_val_transforms
->>> transform = get_train_transforms(img_size=512)
->>> result = transform(image=img_np, mask=mask_np)
->>> img_aug, mask_aug = result['image'], result['mask']
 """
 
 from __future__ import annotations
@@ -46,6 +41,52 @@ def _check_albumentations() -> None:
         )
 
 
+def apply_rural_roof_heterogeneity(img_np: np.ndarray, p: float = 0.5) -> np.ndarray:
+    """Simulate rural roof texture variations (tin sheet glare, terracotta tiles, tarpaulin).
+
+    Parameters
+    ----------
+    img_np : np.ndarray
+        RGB image uint8 (H, W, 3).
+    p : float
+        Probability of applying rural roof perturbation.
+
+    Returns
+    -------
+    np.ndarray
+        Texture-perturbed RGB image.
+    """
+    if np.random.rand() > p:
+        return img_np
+
+    img = img_np.astype(np.float32)
+    effect_type = np.random.choice(["tin_glare", "terracotta_tile", "tarpaulin_shift", "asbestos_noise"])
+
+    if effect_type == "tin_glare":
+        # Simulate bright metallic specular reflection on corrugated iron roofs
+        glare_intensity = np.random.uniform(1.15, 1.35)
+        mask = (img[:, :, 0] > 140) & (img[:, :, 1] > 140) & (img[:, :, 2] > 140)
+        img[mask] = np.clip(img[mask] * glare_intensity, 0, 255)
+
+    elif effect_type == "terracotta_tile":
+        # Red/orange clay tile hue perturbation
+        boost = np.random.uniform(1.1, 1.25)
+        img[:, :, 0] = np.clip(img[:, :, 0] * boost, 0, 255)  # Boost Red channel
+
+    elif effect_type == "tarpaulin_shift":
+        # Blue / green plastic tarpaulin roof tint
+        channel = np.random.choice([1, 2])  # Green or Blue channel
+        boost = np.random.uniform(1.1, 1.25)
+        img[:, :, channel] = np.clip(img[:, :, channel] * boost, 0, 255)
+
+    elif effect_type == "asbestos_noise":
+        # High-frequency grain noise simulating rough weathered cement/asbestos sheets
+        noise = np.random.normal(0, 8, img.shape)
+        img = np.clip(img + noise, 0, 255)
+
+    return img.astype(np.uint8)
+
+
 def get_train_transforms(
     img_size: int = 512,
     brightness_limit: float = 0.3,
@@ -66,52 +107,7 @@ def get_train_transforms(
     p_shadow: float = 0.4,
     p_dropout: float = 0.2,
 ) -> "A.Compose":
-    """Build the training augmentation pipeline.
-
-    Parameters
-    ----------
-    img_size : int
-        Target image size (square crop/resize, default 512).
-    brightness_limit : float
-        ±brightness change range (default 0.3).
-    contrast_limit : float
-        ±contrast change range (default 0.3).
-    hue_shift_limit : int
-        Hue shift in degrees (default ±15 — mild, avoids vegetation→building confusion).
-    sat_shift_limit : int
-        Saturation shift (default ±20).
-    val_shift_limit : int
-        HSV value shift (default ±20).
-    blur_limit : int
-        Max blur kernel size (default 3 — subtle, simulates mild motion artifact).
-    shadow_num_shadows_lower : int
-        Min shadows per image in RandomShadow (default 1).
-    shadow_num_shadows_upper : int
-        Max shadows per image in RandomShadow (default 3).
-    coarse_dropout_max_holes : int
-        Max dropout rectangles (default 8).
-    coarse_dropout_max_height : int
-        Max hole height in pixels (default 32).
-    coarse_dropout_max_width : int
-        Max hole width in pixels (default 32).
-    p_flip : float
-        Probability of horizontal/vertical flip (default 0.5).
-    p_rotate90 : float
-        Probability of 90°-multiple rotation (default 0.5).
-    p_lighting : float
-        Probability of brightness/contrast augmentation (default 0.7).
-    p_blur : float
-        Probability of Gaussian blur (default 0.3).
-    p_shadow : float
-        Probability of shadow simulation (default 0.4).
-    p_dropout : float
-        Probability of coarse dropout (default 0.2).
-
-    Returns
-    -------
-    A.Compose
-        Albumentations composed transform applied to both image and mask.
-    """
+    """Build the training augmentation pipeline with rural roof & shadow resilience."""
     _check_albumentations()
 
     return A.Compose([
@@ -131,7 +127,7 @@ def get_train_transforms(
             A.RandomGamma(gamma_limit=(70, 130), p=1.0),
         ], p=p_lighting),
 
-        # --- Colour augmentation (mild — vegetaion/road colour variation) ---
+        # --- Colour augmentation (mild — vegetation/road colour variation) ---
         A.HueSaturationValue(
             hue_shift_limit=hue_shift_limit,
             sat_shift_limit=sat_shift_limit,
@@ -167,33 +163,13 @@ def get_train_transforms(
 
 
 def get_val_transforms(img_size: int = 512) -> "A.Compose":
-    """Build the validation/test transform (resize only, no augmentation).
-
-    Parameters
-    ----------
-    img_size : int
-        Target image size (default 512).
-
-    Returns
-    -------
-    A.Compose
-        Albumentations resize-only transform.
-    """
+    """Build the validation/test transform (resize only, no augmentation)."""
     _check_albumentations()
     return A.Compose([A.Resize(img_size, img_size)])
 
 
 def get_tta_transforms() -> list["A.Compose"]:
-    """Return a list of test-time augmentation transforms for TTA inference.
-
-    Each transform in the list is applied independently to the input image.
-    Predictions are averaged back in the original orientation.
-
-    Returns
-    -------
-    list[A.Compose]
-        List of [identity, hflip, vflip, rot90, rot180, rot270] transforms.
-    """
+    """Return full 6-transform test-time augmentation list."""
     _check_albumentations()
     return [
         A.Compose([]),                                         # Identity
@@ -205,11 +181,20 @@ def get_tta_transforms() -> list["A.Compose"]:
     ]
 
 
+def get_fast_tta_transforms() -> list["A.Compose"]:
+    """Return lightweight 3-transform TTA optimized for fast field laptop inference."""
+    _check_albumentations()
+    return [
+        A.Compose([]),                                         # Identity
+        A.Compose([A.HorizontalFlip(p=1.0)]),                  # H-flip
+        A.Compose([A.VerticalFlip(p=1.0)]),                    # V-flip
+    ]
+
+
 # ---------------------------------------------------------------------------
-# Colour-mask decoder (used by all notebooks for visualisation)
+# Colour-mask decoder
 # ---------------------------------------------------------------------------
 
-# Integer class index → RGB colour (for visualisation overlays)
 _CLASS_COLOR_MAP: dict[int, tuple[int, int, int]] = {
     0: (30, 30, 30),       # Background
     1: (255, 165, 0),      # Building
@@ -220,18 +205,7 @@ _CLASS_COLOR_MAP: dict[int, tuple[int, int, int]] = {
 
 
 def decode_mask_to_color(mask_2d: np.ndarray) -> np.ndarray:
-    """Convert an integer class mask to an RGB colour image.
-
-    Parameters
-    ----------
-    mask_2d : np.ndarray
-        Integer array of shape (H, W) with class indices 0–4.
-
-    Returns
-    -------
-    np.ndarray
-        RGB uint8 array of shape (H, W, 3).
-    """
+    """Convert an integer class mask to an RGB colour image."""
     h, w = mask_2d.shape
     color_img = np.zeros((h, w, 3), dtype=np.uint8)
     for cls_idx, color in _CLASS_COLOR_MAP.items():

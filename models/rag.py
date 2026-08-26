@@ -98,6 +98,50 @@ DEFAULT_SVAMITVA_KNOWLEDGE_DOCS = [
             "- Quality / AI Confidence Indicator and Surveyor Verification Seal."
         ),
     },
+    {
+        "doc_id": "up_revenue_code_2006",
+        "title": "Uttar Pradesh Revenue Code 2006 & Abadi Gharoni Rules",
+        "category": "state_laws_up",
+        "content": (
+            "Under Uttar Pradesh Revenue Code 2006:\n"
+            "1. Section 67: Gram Sabha land encroachment removal protocol for public ponds (Talab), rasta, and pasture land.\n"
+            "2. Section 80: Conversion of agricultural land to abadi / non-agricultural commercial usage.\n"
+            "3. SVAMITVA Gharoni (Form 1): Authorized property title issued for rural residential dwellings inside village Abadi."
+        ),
+    },
+    {
+        "doc_id": "mp_land_revenue_code_1959",
+        "title": "Madhya Pradesh Land Revenue Code 1959 (Abadi & Gaon Than)",
+        "category": "state_laws_mp",
+        "content": (
+            "Under MP Land Revenue Code 1959:\n"
+            "1. Section 244 & 246: Rights to rural house-sites in village Abadi and Gram Sabha consent.\n"
+            "2. Section 248: Penalty and summary eviction for unauthorized encroachment on government and nistar land.\n"
+            "3. Bhu-Abhilekh integration: Direct linkage of drone ULPIN vector polygons with MP Bhulekh portal."
+        ),
+    },
+    {
+        "doc_id": "maharashtra_revenue_code_1966",
+        "title": "Maharashtra Land Revenue Code 1966 & Gaothan Survey (Property Card Form D-1)",
+        "category": "state_laws_mh",
+        "content": (
+            "Under Maharashtra Land Revenue Code 1966:\n"
+            "1. Section 126-131: Detailed Cadastral survey of Gaothan (village abadi) lands by Settlement Commissioner.\n"
+            "2. Property Card (Form D-1): Permanent Record of Rights issued for rural residential properties.\n"
+            "3. City Survey (CTS) / ULPIN synchronization: Dual indexing of Mahabhulekh 7/12 extract and Gaothan property cards."
+        ),
+    },
+    {
+        "doc_id": "gujarat_land_revenue_code",
+        "title": "Gujarat Land Revenue Code 1879 & Gamtal Drone Survey Guidelines",
+        "category": "state_laws_gj",
+        "content": (
+            "Under Gujarat Land Revenue Code:\n"
+            "1. Gamtal Survey: Demarcation of village abadi residential limits under Section 135.\n"
+            "2. Village Form No. 2 & Property Card: Official title issuance linked to E-Dhara land records system.\n"
+            "3. Setback Standard: Minimum 3.5m setback from village arterial roads and 15m from rural water bodies."
+        ),
+    },
 ]
 
 
@@ -172,14 +216,19 @@ class CadastralKnowledgeBase:
 
             scores.append((score, idx))
 
-        scores.sort(key=lambda x: x[0], reverse=True)
-        results = []
-        for score, idx in scores[:top_k]:
-            doc_copy = dict(self.documents[idx])
-            doc_copy["relevance_score"] = float(score)
-            results.append(doc_copy)
+        class KnowledgeDoc(dict):
+            def __getattr__(self, name):
+                try:
+                    return self[name]
+                except KeyError:
+                    raise AttributeError(f"'KnowledgeDoc' has no attribute '{name}'")
 
-        return results
+        scored_docs = sorted(zip(scores, self.documents), key=lambda x: x[0], reverse=True)
+        return [KnowledgeDoc({**doc, "relevance_score": float(s[0])}) for s, doc in scored_docs[:top_k]]
+
+    def query(self, text: str, top_k: int = 3) -> List[Any]:
+        """Alias for retrieve()."""
+        return self.retrieve(text, top_k=top_k)
 
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -13,7 +13,6 @@ from .model import (
     ChannelAttention,
     SE_ResBlock,
     UpBlockAttention,
-    # Phase 2 additions
     SpatialAttention,
     CBAM,
     DeformableResBlock,
@@ -34,13 +33,34 @@ from .losses import (
 )
 
 # --- Geometry ---
-from .geometry import mask_to_cadastral_geojson, orthogonalize_polygon, regularize_polygon
+from .geometry import (
+    adaptive_cadastral_regularization,
+    compute_orthogonality_score,
+    mask_to_cadastral_geojson,
+    orthogonalize_polygon,
+    regularize_polygon,
+    separate_abutting_buildings,
+)
 
 # --- Uncertainty ---
-from .uncertainty import MCDropoutInference, ProductionInference, TTAInference
+from .uncertainty import (
+    FastEvidentialUncertainty,
+    FastTTAInference,
+    MCDropoutInference,
+    ProductionInference,
+    TTAInference,
+)
 
 # --- Training Utilities ---
-from .utils import ModelEMA, TrainingConfig, export_to_onnx, get_group_norm, set_seed
+from .utils import (
+    ModelEMA,
+    TrainingConfig,
+    export_to_onnx,
+    get_group_norm,
+    hann_weighted_2d_window,
+    seamless_tile_stitch,
+    set_seed,
+)
 
 # --- Data Pipeline ---
 from .data import (
@@ -52,7 +72,14 @@ from .data import (
 )
 
 # --- Augmentation ---
-from .augmentation import decode_mask_to_color, get_train_transforms, get_val_transforms
+from .augmentation import (
+    apply_rural_roof_heterogeneity,
+    decode_mask_to_color,
+    get_fast_tta_transforms,
+    get_train_transforms,
+    get_tta_transforms,
+    get_val_transforms,
+)
 
 # --- Trainer ---
 from .trainer import AeroSyncTrainer
@@ -73,7 +100,7 @@ __all__ = [
     "CLASS_NAMES",
     "CLASS_COLORS",
     "ROAD_CLASS_ID",
-    # Architecture — original
+    # Architecture
     "ChannelAttention",
     "SE_ResBlock",
     "AttentionGate",
@@ -81,7 +108,6 @@ __all__ = [
     "UpBlockAttention",
     "AeroSyncAttentionResUNet",
     "AeroSyncUNet",
-    # Architecture — Phase 2
     "SpatialAttention",
     "CBAM",
     "DeformableResBlock",
@@ -96,18 +122,25 @@ __all__ = [
     # Geometry
     "regularize_polygon",
     "orthogonalize_polygon",
+    "adaptive_cadastral_regularization",
+    "compute_orthogonality_score",
+    "separate_abutting_buildings",
     "mask_to_cadastral_geojson",
     # Uncertainty
     "MCDropoutInference",
+    "FastEvidentialUncertainty",
     "TTAInference",
+    "FastTTAInference",
     "ProductionInference",
-    # Utils
+    # Training Utilities
     "set_seed",
     "get_group_norm",
     "TrainingConfig",
-    "ModelEMA",
     "export_to_onnx",
-    # Data
+    "ModelEMA",
+    "hann_weighted_2d_window",
+    "seamless_tile_stitch",
+    # Data Pipeline
     "CadastralDroneDataset",
     "SpatialSplitter",
     "HardExampleMiner",
@@ -116,16 +149,18 @@ __all__ = [
     # Augmentation
     "get_train_transforms",
     "get_val_transforms",
+    "get_tta_transforms",
+    "get_fast_tta_transforms",
+    "apply_rural_roof_heterogeneity",
     "decode_mask_to_color",
     # Trainer
     "AeroSyncTrainer",
-    # RAG & LLM
+    # RAG & Cadastral LLM
     "CadastralKnowledgeBase",
-    "SpatialGeoJSONRetriever",
+    "DEFAULT_SVAMITVA_KNOWLEDGE_DOCS",
     "ParcelRecord",
+    "SpatialGeoJSONRetriever",
     "audit_regulatory_compliance",
     "generate_property_card",
     "AeroSyncCadastralLLM",
-    "DEFAULT_SVAMITVA_KNOWLEDGE_DOCS",
 ]
-

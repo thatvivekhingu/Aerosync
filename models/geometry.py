@@ -4,10 +4,16 @@ models/geometry.py
 Geometry processing utilities for AeroSync cadastral segmentation.
 
 Contains:
-- regularize_polygon       : Simplify / heal shapely polygons.
-- orthogonalize_polygon    : Dominant-angle edge snapping to 90° multiples.
-- mask_to_cadastral_geojson: Vectorize segmentation mask → GeoJSON FeatureCollection
-                             with real per-polygon confidence scores.
+- regularize_polygon             : Simplify / heal shapely polygons.
+- orthogonalize_polygon          : Dominant-angle edge snapping to 90° multiples.
+- adaptive_cadastral_regularization: Intelligent hybrid regularizer that snaps
+                                   orthogonal buildings to 90° while preserving
+                                   natural non-rectangular & curved village shapes.
+- separate_abutting_buildings    : Distance transform + morphological watershed to
+                                   split shared-wall congested village buildings.
+- mask_to_cadastral_geojson      : Vectorize segmentation mask → GeoJSON FeatureCollection
+                                   with real per-polygon confidence scores and
+                                   abutting wall separation.
 
 All public functions are backward-compatible with the original model.py API.
 """
@@ -16,7 +22,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Optional
+from typing import Optional, List, Tuple
 
 import cv2
 import numpy as np
@@ -27,7 +33,7 @@ from .constants import CLASS_NAMES
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# 1. Polygon regularization (unchanged from original)
+# 1. Polygon regularization
 # ---------------------------------------------------------------------------
 
 def regularize_polygon(poly: Polygon, tolerance: float = 1.5) -> Polygon:
@@ -54,28 +60,17 @@ def regularize_polygon(poly: Polygon, tolerance: float = 1.5) -> Polygon:
 
 
 # ---------------------------------------------------------------------------
-# 2. Dominant-angle orthogonalization (Bug 1 fix)
+# 2. Dominant-angle orthogonalization
 # ---------------------------------------------------------------------------
 
 def orthogonalize_polygon(poly: Polygon, angle_threshold_deg: float = 15.0) -> Polygon:
     """Orthogonalize a building footprint using dominant-angle edge snapping.
 
-    The original implementation computed snapped vectors but never used them
-    (a silent no-op). This replacement uses a proper dominant-orientation
-    algorithm:
-
     1. Compute the angle of every edge modulo 90 degrees.
-    2. Take the length-weighted median as the polygon's dominant orientation
-       ``theta_dom``.
-    3. Snap each edge direction to the nearest multiple of 90° from
-       ``theta_dom``, preserving the original edge length.
-    4. Reconstruct vertex positions by walking the snapped edge vectors from
-       the centroid's first vertex.
+    2. Take the length-weighted median as the polygon's dominant orientation θ_dom.
+    3. Snap each edge direction to the nearest multiple of 90° from θ_dom.
+    4. Reconstruct vertex positions by walking the snapped edge vectors.
     5. Validate with shapely; fall back to the original polygon on failure.
-
-    This matters for SVAMITVA because legal cadastral maps require right-angle
-    building footprints — the previous no-op silently produced angled outputs
-    that fail cadastral validation.
 
     Parameters
     ----------
@@ -99,13 +94,9 @@ def orthogonalize_polygon(poly: Polygon, angle_threshold_deg: float = 15.0) -> P
 
     coords_arr = np.array(coords, dtype=np.float64)
 
-    # ------------------------------------------------------------------
-    # Step 1 — compute edge vectors and their angles mod 90°
-    # ------------------------------------------------------------------
     edges = np.roll(coords_arr, -1, axis=0) - coords_arr          # shape (n, 2)
     lengths = np.linalg.norm(edges, axis=1)                        # shape (n,)
 
-    # Remove degenerate edges
     valid = lengths > 1e-9
     if valid.sum() < 3:
         return poly
@@ -113,11 +104,9 @@ def orthogonalize_polygon(poly: Polygon, angle_threshold_deg: float = 15.0) -> P
     angles_rad = np.arctan2(edges[:, 1], edges[:, 0])             # (-π, π]
     angles_mod90 = angles_rad % (np.pi / 2)                       # (0, π/2]
 
-    # ------------------------------------------------------------------
-    # Step 2 — length-weighted median to find dominant orientation θ_dom
-    # ------------------------------------------------------------------
     valid_angles = angles_mod90[valid]
     valid_lengths = lengths[valid]
+
     sort_idx = np.argsort(valid_angles)
     sorted_angles = valid_angles[sort_idx]
     sorted_lengths = valid_lengths[sort_idx]
@@ -126,9 +115,6 @@ def orthogonalize_polygon(poly: Polygon, angle_threshold_deg: float = 15.0) -> P
     median_idx = np.searchsorted(cumulative, total / 2.0)
     theta_dom = sorted_angles[min(median_idx, len(sorted_angles) - 1)]
 
-    # ------------------------------------------------------------------
-    # Step 3 — snap each edge to the nearest 90° multiple from θ_dom
-    # ------------------------------------------------------------------
     snapped_edges = np.empty_like(edges)
     for i in range(n):
         length = lengths[i]
@@ -137,7 +123,6 @@ def orthogonalize_polygon(poly: Polygon, angle_threshold_deg: float = 15.0) -> P
             continue
 
         angle = angles_rad[i]
-        # Express angle relative to dominant orientation, round to nearest 90°
         relative = angle - theta_dom
         snapped_relative = np.round(relative / (np.pi / 2)) * (np.pi / 2)
         snapped_angle = snapped_relative + theta_dom
@@ -147,17 +132,11 @@ def orthogonalize_polygon(poly: Polygon, angle_threshold_deg: float = 15.0) -> P
             np.sin(snapped_angle) * length,
         ])
 
-    # ------------------------------------------------------------------
-    # Step 4 — reconstruct vertices by cumulative sum of snapped edges
-    # ------------------------------------------------------------------
     new_coords = np.empty_like(coords_arr)
     new_coords[0] = coords_arr[0]
     for i in range(1, n):
         new_coords[i] = new_coords[i - 1] + snapped_edges[i - 1]
 
-    # ------------------------------------------------------------------
-    # Step 5 — validate; fall back on failure
-    # ------------------------------------------------------------------
     try:
         closing = new_coords[0]
         ring = np.vstack([new_coords, closing])
@@ -172,7 +151,152 @@ def orthogonalize_polygon(poly: Polygon, angle_threshold_deg: float = 15.0) -> P
 
 
 # ---------------------------------------------------------------------------
-# 3. Mask → GeoJSON vectorization (Bug 2 fix: real confidence scores)
+# 3. Adaptive Cadastral Regularization (Non-90° Rural Geometry Preserving)
+# ---------------------------------------------------------------------------
+
+def compute_orthogonality_score(poly: Polygon) -> float:
+    """Compute the degree of orthogonality of a polygon in range [0, 1].
+
+    Calculates the proportion of internal corner angles that are within ±15°
+    of 90° or 270°.
+    """
+    if not poly.is_valid or poly.is_empty:
+        return 0.0
+    coords = np.array(poly.exterior.coords)[:-1]
+    n = len(coords)
+    if n < 4:
+        return 0.0
+
+    v1 = np.roll(coords, 1, axis=0) - coords
+    v2 = np.roll(coords, -1, axis=0) - coords
+
+    # Normalize vectors
+    norm1 = np.linalg.norm(v1, axis=1, keepdims=True) + 1e-9
+    norm2 = np.linalg.norm(v2, axis=1, keepdims=True) + 1e-9
+    u1 = v1 / norm1
+    u2 = v2 / norm2
+
+    # Dot products for angles
+    cos_angles = np.clip(np.sum(u1 * u2, axis=1), -1.0, 1.0)
+    angles_deg = np.degrees(np.arccos(cos_angles))
+
+    # Check how many angles are close to 90° (between 75° and 105°)
+    orthogonal_corners = np.sum((angles_deg >= 75.0) & (angles_deg <= 105.0))
+    return float(orthogonal_corners / n)
+
+
+def adaptive_cadastral_regularization(
+    poly: Polygon,
+    ortho_threshold: float = 0.60,
+    tolerance: float = 1.0,
+) -> Polygon:
+    """Adaptively regularize cadastral polygons without distorting non-90° rural shapes.
+
+    - If the parcel is naturally rectangular / orthogonal (orthogonality score >= ortho_threshold),
+      dominant 90° edge-snapping is applied.
+    - If the parcel has organic, curved, trapezoidal, or irregular boundaries (common in rural
+      abadi / gaothan areas), topology-preserving Douglas-Peucker simplification is used to
+      maintain the true ground geometry.
+
+    Parameters
+    ----------
+    poly : Polygon
+        Input shapely polygon.
+    ortho_threshold : float
+        Minimum proportion of ~90° corners required to trigger 90° orthogonal snapping.
+    tolerance : float
+        Simplification tolerance.
+
+    Returns
+    -------
+    Polygon
+        Regularized polygon respecting true rural building morphology.
+    """
+    clean_poly = regularize_polygon(poly, tolerance=tolerance)
+    if clean_poly.is_empty or not clean_poly.is_valid:
+        return poly
+
+    ortho_score = compute_orthogonality_score(clean_poly)
+    if ortho_score >= ortho_threshold:
+        return orthogonalize_polygon(clean_poly)
+    
+    return clean_poly
+
+
+# ---------------------------------------------------------------------------
+# 4. Abutting Wall Separation (Distance Transform + Watershed)
+# ---------------------------------------------------------------------------
+
+def separate_abutting_buildings(
+    binary_mask: np.ndarray,
+    min_distance_px: int = 4,
+    threshold_ratio: float = 0.35,
+) -> np.ndarray:
+    """Separate connected, congested building blobs with shared abutting walls.
+
+    Uses Euclidean Distance Transform and Morphological Peak Watershed to
+    isolate individual building plinth centers and split shared-wall conglomerates
+    into distinct property instances.
+
+    Parameters
+    ----------
+    binary_mask : np.ndarray
+        2-D uint8 binary mask (0 = background, 255 = building).
+    min_distance_px : int
+        Minimum pixel distance between individual house seeds.
+    threshold_ratio : float
+        Fraction of maximum distance peak considered as seed nucleus.
+
+    Returns
+    -------
+    np.ndarray
+        2-D integer labeled mask where each separated house has a unique ID (1, 2, ...).
+    """
+    if binary_mask.max() == 0:
+        return np.zeros_like(binary_mask, dtype=np.int32)
+
+    # 1. Distance transform
+    dist_transform = cv2.distanceTransform(binary_mask, cv2.DIST_L2, 5)
+
+    # 2. Local peak thresholding for seed markers
+    _, sure_fg = cv2.threshold(
+        dist_transform,
+        threshold_ratio * dist_transform.max(),
+        255,
+        cv2.THRESH_BINARY,
+    )
+    sure_fg = sure_fg.astype(np.uint8)
+
+    # 3. Find connected components on seed markers
+    num_markers, markers = cv2.connectedComponents(sure_fg)
+
+    if num_markers <= 2:
+        # Single building or none — return simple connected components
+        _, labels = cv2.connectedComponents(binary_mask)
+        return labels
+
+    # 4. Dilate sure background
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    sure_bg = cv2.dilate(binary_mask, kernel, iterations=2)
+    unknown = cv2.subtract(sure_bg, sure_fg)
+
+    # 5. Watershed to split abutting walls
+    markers = markers + 1
+    markers[unknown == 255] = 0
+
+    img_color = cv2.cvtColor(binary_mask, cv2.COLOR_GRAY2BGR)
+    markers = cv2.watershed(img_color, markers)
+
+    # Label background as 0 and instances as 1, 2, ...
+    labels = np.zeros_like(binary_mask, dtype=np.int32)
+    labels[markers > 1] = markers[markers > 1] - 1
+    labels[binary_mask == 0] = 0
+
+    return labels
+
+
+# ---------------------------------------------------------------------------
+# 5. Mask → GeoJSON vectorization with Real Confidence and Abutting Separation
 # ---------------------------------------------------------------------------
 
 def mask_to_cadastral_geojson(
@@ -184,6 +308,8 @@ def mask_to_cadastral_geojson(
     tiepoint_y: float = 0.0,
     tolerance: float = 1.2,
     prob_map: Optional[np.ndarray] = None,
+    separate_instances: bool = True,
+    adaptive_regularization: bool = True,
 ) -> dict:
     """Vectorize a segmentation mask into a cadastral GeoJSON FeatureCollection.
 
@@ -206,13 +332,11 @@ def mask_to_cadastral_geojson(
     tolerance : float
         Polygon simplification tolerance multiplier (× pixel_scale).
     prob_map : np.ndarray or None
-        Optional 2-D float array of per-pixel softmax probability for
-        ``class_id``, shape (H, W), values in [0, 1].
-        When provided:
-          - ``confidence_score`` = mean probability inside the polygon mask.
-          - ``uncertainty_score`` = std of probabilities inside the mask.
-        When ``None``, both fields are set to ``null`` in GeoJSON (previously
-        they were hardcoded to the misleading value 0.96).
+        Optional 2-D float array of per-pixel softmax probability.
+    separate_instances : bool
+        Whether to perform distance-transform watershed separation for abutting walls.
+    adaptive_regularization : bool
+        Whether to use adaptive shape regularization (preserves non-90° rural shapes).
 
     Returns
     -------
@@ -224,11 +348,24 @@ def mask_to_cadastral_geojson(
     binary = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, kernel)
     binary = cv2.morphologyEx(binary, cv2.MORPH_OPEN, kernel)
 
-    contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     features = []
     parcel_idx = 1
 
-    for cnt in contours:
+    # If splitting buildings with abutting walls
+    if class_id == 1 and separate_instances:
+        labeled_mask = separate_abutting_buildings(binary)
+        unique_labels = np.unique(labeled_mask)
+        contours_list = []
+        for lab in unique_labels:
+            if lab == 0:
+                continue
+            inst_binary = (labeled_mask == lab).astype(np.uint8) * 255
+            cnts, _ = cv2.findContours(inst_binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            contours_list.extend(cnts)
+    else:
+        contours_list, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    for cnt in contours_list:
         if len(cnt) < 4:
             continue
         pts_px = cnt.reshape(-1, 2)
@@ -248,9 +385,18 @@ def mask_to_cadastral_geojson(
             if area_sqm < min_area:
                 continue
 
-            clean_poly = regularize_polygon(poly, tolerance=tolerance * pixel_scale)
-            if class_id == 1:  # Orthogonalize building footprints
-                clean_poly = orthogonalize_polygon(clean_poly)
+            if class_id == 1:
+                if adaptive_regularization:
+                    clean_poly = adaptive_cadastral_regularization(
+                        poly,
+                        ortho_threshold=0.65,
+                        tolerance=tolerance * pixel_scale,
+                    )
+                else:
+                    clean_poly = regularize_polygon(poly, tolerance=tolerance * pixel_scale)
+                    clean_poly = orthogonalize_polygon(clean_poly)
+            else:
+                clean_poly = regularize_polygon(poly, tolerance=tolerance * pixel_scale)
 
             centroid = clean_poly.centroid
             ulpin_id = (
@@ -260,14 +406,11 @@ def mask_to_cadastral_geojson(
                 f"{parcel_idx:03d}"
             )
 
-            # ----------------------------------------------------------
-            # Per-polygon confidence & uncertainty (Bug 2 fix)
-            # ----------------------------------------------------------
+            # Per-polygon confidence & uncertainty
             confidence_score: Optional[float] = None
             uncertainty_score: Optional[float] = None
 
             if prob_map is not None:
-                # Build a pixel-space mask for this contour
                 h, w = pred_mask.shape
                 contour_mask = np.zeros((h, w), dtype=np.uint8)
                 cv2.drawContours(contour_mask, [cnt], -1, 255, thickness=cv2.FILLED)
@@ -287,6 +430,7 @@ def mask_to_cadastral_geojson(
                     "perimeter_m": round(clean_poly.length, 2),
                     "confidence_score": round(confidence_score, 4) if confidence_score is not None else None,
                     "uncertainty_score": round(uncertainty_score, 4) if uncertainty_score is not None else None,
+                    "regularization_type": "Adaptive_Cadastral_Hybrid" if adaptive_regularization else "Strict_90deg_Orthogonal",
                     "validation_status": "AI_Attention_Generated_Validated",
                 },
                 "geometry": json.loads(json.dumps(clean_poly.__geo_interface__)),
