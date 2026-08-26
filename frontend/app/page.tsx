@@ -9,12 +9,13 @@ import ParcelInspector from "@/components/ParcelInspector";
 import RagChatbot from "@/components/RagChatbot";
 import PropertyCardModal from "@/components/PropertyCardModal";
 import ComplianceAuditor from "@/components/ComplianceAuditor";
+import ChangeDetectionViewer from "@/components/ChangeDetectionViewer";
 import Footer from "@/components/Footer";
 import { CadastralParcel, CADASTRAL_PARCELS } from "@/data/parcels";
-import { Map, Bot, FileText, ShieldAlert } from "lucide-react";
+import { Map, Bot, FileText, ShieldAlert, History } from "lucide-react";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<"gis" | "rag" | "compliance">("gis");
+  const [activeTab, setActiveTab] = useState<"gis" | "rag" | "compliance" | "changedetect">("gis");
   const [selectedParcel, setSelectedParcel] = useState<CadastralParcel>(CADASTRAL_PARCELS[0]);
   const [showPropertyCardModal, setShowPropertyCardModal] = useState(false);
 
@@ -39,7 +40,7 @@ export default function Home() {
               Interactive Cadastral Intelligence Platform
             </h2>
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-              Explore live drone parcel segmentation, audit setback compliance, query legal land guidelines via AI, and draft official SVAMITVA Property Cards.
+              Explore live drone parcel segmentation, audit setback compliance, query legal land guidelines via AI, track bi-temporal mutations, and draft official SVAMITVA Property Cards.
             </p>
           </div>
 
@@ -47,7 +48,7 @@ export default function Home() {
           <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 bg-slate-200/80 backdrop-blur rounded-2xl w-fit mx-auto mb-8 shadow-inner">
             <button
               onClick={() => setActiveTab("gis")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 ${
+              className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 ${
                 activeTab === "gis"
                   ? "bg-white text-primary shadow-sm"
                   : "text-slate-600 hover:text-slate-900"
@@ -58,8 +59,20 @@ export default function Home() {
             </button>
 
             <button
+              onClick={() => setActiveTab("changedetect")}
+              className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 ${
+                activeTab === "changedetect"
+                  ? "bg-white text-primary shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <History size={16} />
+              <span>Bi-Temporal Change Tracker</span>
+            </button>
+
+            <button
               onClick={() => setActiveTab("rag")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 ${
+              className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 ${
                 activeTab === "rag"
                   ? "bg-white text-primary shadow-sm"
                   : "text-slate-600 hover:text-slate-900"
@@ -71,7 +84,7 @@ export default function Home() {
 
             <button
               onClick={() => setActiveTab("compliance")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 ${
+              className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 ${
                 activeTab === "compliance"
                   ? "bg-white text-primary shadow-sm"
                   : "text-slate-600 hover:text-slate-900"
@@ -98,6 +111,12 @@ export default function Home() {
                   onOpenPropertyCard={() => setShowPropertyCardModal(true)}
                 />
               </div>
+            </div>
+          )}
+
+          {activeTab === "changedetect" && (
+            <div className="animate-fadeIn">
+              <ChangeDetectionViewer />
             </div>
           )}
 
