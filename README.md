@@ -52,7 +52,15 @@ Humne is project ko modular tarike se 8 main parts me build kiya hai:
 - **ULPIN Auto-Generation**: Har property card ko legal ID aur area calculate karke deta hai.
 
 ### 8. 🧪 Testing & Validation (`tests/`)
-- **39 PyTest Unit Tests** likhe hain jo har loss function, model layer, aur dataset pipeline ko test karte hain (All 39 passing ✅).
+### 8. 🧪 Testing & Validation (`tests/`)
+- **44 PyTest Unit Tests** likhe hain jo har loss function, model layer, dataset pipeline, aur RAG retrieval engine ko test karte hain (All 44 passing ✅).
+
+### 9. 🧠 Geo-Cadastral RAG & LLM Assistant (`models/rag.py`)
+- **Knowledge Base (RAG)**: SVAMITVA Scheme Guidelines, DoLR norms, ULPIN rules, aur buffer zone laws ka built-in semantic store.
+- **Natural Language Spatial Queries**: Drone survey output (GeoJSON) se direct sawal pooch sakte hain (Hindi/English).
+- **Automated Encroachment Audit**: Talab (water bodies >=15m) aur Sadak (roads >=3m) ke pass buffer violations automatically detect karta hai.
+- **SVAMITVA Property Card Draft Generator**: Har ULPIN parcel ka official Form 1 property card ready karta hai.
+- **Multi-Backend**: Gemini API, OpenAI, local LLMs, ya bina kisi key ke built-in Offline Reasoner.
 
 ---
 
@@ -65,8 +73,10 @@ AeroSync/
 ├── 2_AeroSync_Building_Footprint_Extraction_Binary.ipynb    # Sirf gharon (buildings) ke footprints nikalne ke liye
 ├── 3_AeroSync_Large_GeoTIFF_Tiling_and_Stitching.ipynb       # Badi gigapixel drone maps ko tile aur stitch karne ke liye
 ├── 4_AeroSync_Cadastral_Quality_and_Accuracy_Evaluation.ipynb# Accuracy, IoU, Dice aur boundary quality check karne ke liye
+├── 5_AeroSync_Cadastral_RAG_and_LLM_Assistant.ipynb         # Cadastral RAG & AI Chatbot for Land Records & Inquiries
 │
 ├── models/                         # Core Python Library
+│   ├── rag.py                      # RAG, Cadastral LLM, Encroachment Audit & Property Cards
 │   ├── model.py                    # AI Architectures (Attention ResUNet, ASPP)
 │   ├── losses.py                   # Loss functions (Focal, Dice, Boundary, clDice)
 │   ├── trainer.py                  # PyTorch model training pipeline
@@ -78,11 +88,13 @@ AeroSync/
 │   └── utils.py                    # Configurations aur helper functions
 │
 ├── tests/
-│   └── test_aerosync.py            # Automated tests (39 passed)
+│   ├── test_aerosync.py            # Computer Vision & geometry tests
+│   └── test_rag.py                 # RAG, spatial query & LLM tests (44/44 passed)
 │
 ├── requirements.txt                # Required libraries list
 └── README.md                       # Documentation
 ```
+
 
 ---
 

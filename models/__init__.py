@@ -57,6 +57,17 @@ from .augmentation import decode_mask_to_color, get_train_transforms, get_val_tr
 # --- Trainer ---
 from .trainer import AeroSyncTrainer
 
+# --- RAG & Cadastral LLM ---
+from .rag import (
+    AeroSyncCadastralLLM,
+    CadastralKnowledgeBase,
+    DEFAULT_SVAMITVA_KNOWLEDGE_DOCS,
+    ParcelRecord,
+    SpatialGeoJSONRetriever,
+    audit_regulatory_compliance,
+    generate_property_card,
+)
+
 __all__ = [
     # Constants
     "CLASS_NAMES",
@@ -108,4 +119,13 @@ __all__ = [
     "decode_mask_to_color",
     # Trainer
     "AeroSyncTrainer",
+    # RAG & LLM
+    "CadastralKnowledgeBase",
+    "SpatialGeoJSONRetriever",
+    "ParcelRecord",
+    "audit_regulatory_compliance",
+    "generate_property_card",
+    "AeroSyncCadastralLLM",
+    "DEFAULT_SVAMITVA_KNOWLEDGE_DOCS",
 ]
+

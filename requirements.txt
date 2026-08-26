@@ -46,7 +46,11 @@ seaborn>=0.12.0        # heatmap visualisations (confusion matrix, per-class bre
 pytest>=7.4.0
 pytest-cov>=4.1.0      # coverage: pytest --cov=models tests/
 
+# --- RAG & Cadastral LLM Assistant (Optional / Enhanced) ---
+google-generativeai>=0.7.0  # Optional Gemini API support (fallback to offline engine)
+
 # --- Code quality ---
 black>=23.0.0
 isort>=5.12.0
 mypy>=1.5.0
+
