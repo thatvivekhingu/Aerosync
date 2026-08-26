@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AeroSync — AI-Powered Cadastral Land Intelligence from Drone Imagery</title>
+  <meta name="description" content="AeroSync is an end-to-end platform that uses AI, computer vision and geospatial intelligence to generate accurate, reliable and tamper-proof land records from drone data.">
+  
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       1. NAVIGATION BAR
+       ════════════════════════════════════════════════════════════════════════ -->
+  <header class="navbar">
+    <div class="nav-container">
+      <!-- Brand Logo -->
+      <a href="#home" class="logo-brand">
+        <div class="logo-icon-wrap">
+          <!-- Drone SVG Icon -->
+          <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="18" cy="18" r="5" stroke="#028090" stroke-width="2.5" fill="#e0f2f1"/>
+            <path d="M14 14L8 8M22 14L28 8M14 22L8 28M22 22L28 28" stroke="#028090" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="7" cy="7" r="3" fill="#00a896"/>
+            <circle cx="29" cy="7" r="3" fill="#00a896"/>
+            <circle cx="7" cy="29" r="3" fill="#00a896"/>
+            <circle cx="29" cy="29" r="3" fill="#00a896"/>
+          </svg>
+        </div>
+        <span class="logo-text">Aero<span>Sync</span></span>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#home" class="nav-link active">Home</a></li>
+          <li><a href="#features" class="nav-link">Features</a></li>
+          <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+          <li><a href="#modules" class="nav-link">Modules</a></li>
+          <li><a href="#use-cases" class="nav-link">Use Cases</a></li>
+          <li><a href="#about" class="nav-link">About Us</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- CTA Button -->
+      <a href="#dashboard" class="btn-get-started">
+        Get Started
+      </a>
+    </div>
+  </header>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       2. HERO SECTION
+       ════════════════════════════════════════════════════════════════════════ -->
+  <main>
+    <section id="home" class="hero-section">
+      <div class="hero-grid">
+        
+        <!-- Left Hero Content -->
+        <div class="hero-content">
+          <div class="hero-tag">
+            <span>Problem Statement ID: 26012 | DoLR</span>
+          </div>
+
+          <h1 class="hero-title">
+            AI-Powered Cadastral Land Intelligence from <span class="highlight">Drone Imagery</span>
+          </h1>
+
+          <p class="hero-description">
+            AeroSync is an end-to-end platform that uses AI, computer vision and geospatial intelligence to generate accurate, reliable and tamper-proof land records from drone data.
+          </p>
+
+          <div class="hero-actions">
+            <a href="#dashboard" class="btn-primary">
+              Explore Platform
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+            
+            <a href="#how-it-works" class="btn-secondary">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="10 8 16 12 10 16 10 8" fill="currentColor"></polygon>
+              </svg>
+              Watch Overview
+            </a>
+          </div>
+
+          <!-- Trust Badges -->
+          <div class="trust-badges-bar">
+            <div class="badge-item">
+              <div class="badge-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <polyline points="9 12 11 14 15 10"/>
+                </svg>
+              </div>
+              <span class="badge-text">Accurate &amp; Reliable</span>
+            </div>
+
+            <div class="badge-item">
+              <div class="badge-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+              </div>
+              <span class="badge-text">Geospatial Intelligence</span>
+            </div>
+
+            <div class="badge-item">
+              <div class="badge-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </div>
+              <span class="badge-text">Secure &amp; Tamper-proof</span>
+            </div>
+
+            <div class="badge-item">
+              <div class="badge-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+              </div>
+              <span class="badge-text">Efficient &amp; Scalable</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Hero Media Graphic -->
+        <div class="hero-media-wrap">
+          <img src="assets/hero_drone.jpg" alt="AeroSync Drone Cadastral Mapping" class="hero-media-img">
+          <div class="hero-floating-chip">
+            <div class="live-pulse-dot"></div>
+            <span>SVAMITVA AI Engine Online • 44 Tests Validated</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         3. OUR MISSION SECTION
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section id="features" class="mission-section">
+      <div class="mission-container">
+        
+        <div class="section-header-center">
+          <h2 class="section-title">Our Mission</h2>
+          <p class="section-subtitle">
+            To digitize and modernize land records using advanced drone technology and AI, enabling transparency, reducing disputes and empowering rural communities.
+          </p>
+        </div>
+
+        <div class="mission-cards-grid">
+          <!-- Card 1 -->
+          <div class="mission-card">
+            <div class="card-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v20M2 12h20M6 6l12 12M18 6L6 18"/>
+                <circle cx="12" cy="12" r="4"/>
+              </svg>
+            </div>
+            <h3 class="card-title">Drone Data Acquisition</h3>
+            <p class="card-desc">High-resolution aerial imagery captured for accurate mapping.</p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="mission-card">
+            <div class="card-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04"/>
+                <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04"/>
+              </svg>
+            </div>
+            <h3 class="card-title">AI &amp; Computer Vision</h3>
+            <p class="card-desc">Advanced models extract features and detect land boundaries.</p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="mission-card">
+            <div class="card-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+                <line x1="8" y1="2" x2="8" y2="18"/>
+                <line x1="16" y1="6" x2="16" y2="22"/>
+              </svg>
+            </div>
+            <h3 class="card-title">Geospatial Processing</h3>
+            <p class="card-desc">Georeferencing, stitching and terrain analysis for precision.</p>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="mission-card">
+            <div class="card-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+            </div>
+            <h3 class="card-title">Digital Land Records</h3>
+            <p class="card-desc">Generate accurate, standardized and secure cadastral records.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         4. LIVE INTERACTIVE CADASTRAL GIS & AI DASHBOARD
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section id="dashboard" class="dashboard-section">
+      <div class="dashboard-container">
+        
+        <div class="section-header-center" style="margin-bottom: 2rem;">
+          <h2 class="section-title">Interactive Cadastral Intelligence Platform</h2>
+          <p class="section-subtitle">
+            Explore live drone parcel segmentation, audit setback compliance, query legal land guidelines via AI, and draft official SVAMITVA Property Cards.
+          </p>
+        </div>
+
+        <!-- Dashboard Tabs -->
+        <div class="dashboard-tabs">
+          <button class="dash-tab-btn active" data-tab="view-gis">
+            🗺️ Live GIS &amp; Parcel Inspector
+          </button>
+          <button class="dash-tab-btn" data-tab="view-rag">
+            🧠 Cadastral RAG &amp; AI Chat
+          </button>
+          <button class="dash-tab-btn" data-tab="view-card">
+            📜 SVAMITVA Property Card Draft
+          </button>
+          <button class="dash-tab-btn" data-tab="view-compliance">
+            ⚠️ Buffer &amp; Encroachment Audit
+          </button>
+        </div>
+
+        <!-- Tab 1: GIS Map View -->
+        <div id="view-gis" class="dash-view-content active">
+          <div class="gis-layout-grid">
+            
+            <div class="gis-viewport-panel">
+              <div class="gis-toolbar">
+                <span style="font-weight: 600; font-size: 0.92rem; color: var(--slate-700);">Interactive Layers:</span>
+                <div class="layer-toggles">
+                  <div class="layer-chip active" data-layer="drone">🛰️ Drone RGB</div>
+                  <div class="layer-chip active" data-layer="segmentation">🎨 AI Mask</div>
+                  <div class="layer-chip active" data-layer="polygons">📐 90° Polygons</div>
+                  <div class="layer-chip active" data-layer="ulpins">🏷️ ULPIN IDs</div>
+                  <div class="layer-chip" data-layer="uncertainty">🔍 Uncertainty Flags</div>
+                </div>
+              </div>
+
+              <div class="gis-canvas-container">
+                <canvas id="gisCanvas"></canvas>
+
+                <div class="canvas-legend-overlay">
+                  <div style="font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 3px; margin-bottom: 3px;">Cadastral Classes</div>
+                  <div class="legend-row"><div class="legend-color" style="background: #ff9800;"></div> Building (Class 1)</div>
+                  <div class="legend-row"><div class="legend-color" style="background: #ffeb3b;"></div> Road (Class 2)</div>
+                  <div class="legend-row"><div class="legend-color" style="background: #00a6fb;"></div> Water Body (Class 3)</div>
+                  <div class="legend-row"><div class="legend-color" style="background: #2ec4b6;"></div> Greenery (Class 4)</div>
+                  <div class="legend-row"><div class="legend-color" style="background: #e63946;"></div> Surveyor Verification</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Parcel Details Panel -->
+            <div class="parcel-info-panel">
+              <div class="panel-header">
+                <h3 class="panel-title">Parcel Intelligence</h3>
+                <span style="font-size: 0.8rem; color: var(--slate-500);">Click on any parcel in map to inspect</span>
+              </div>
+
+              <div class="property-attribute-list">
+                <div class="prop-row">
+                  <span class="prop-key">ULPIN (Bhu-Aadhaar):</span>
+                  <span class="prop-val" id="detail-ulpin">ULPIN-26012-0042</span>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-key">Owner Name:</span>
+                  <span class="prop-val" id="detail-owner">Shri Rajesh Kumar Patel</span>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-key">Category:</span>
+                  <span class="prop-val" id="detail-category">Residential Building</span>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-key">Built-up Area:</span>
+                  <span class="prop-val" id="detail-area">145.5 sq.m (1566 sq.ft)</span>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-key">Perimeter:</span>
+                  <span class="prop-val" id="detail-perimeter">48.2 meters</span>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-key">Khasra No:</span>
+                  <span class="prop-val" id="detail-khasra">142/1</span>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-key">AI Confidence:</span>
+                  <span class="prop-val"><span class="badge-confidence-high" id="detail-confidence">96.0% (High)</span></span>
+                </div>
+                <div class="prop-row">
+                  <span class="prop-key">Verification Status:</span>
+                  <span class="prop-val" id="detail-verification">✅ Verified</span>
+                </div>
+              </div>
+
+              <button class="btn-primary" style="margin-top: auto; justify-content: center; width: 100%;" onclick="document.querySelector('[data-tab=view-card]').click()">
+                Generate Property Card Draft 📄
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tab 2: RAG AI Assistant -->
+        <div id="view-rag" class="dash-view-content">
+          <div class="chat-view-grid">
+            <div class="chat-sidebar">
+              <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--slate-900);">Quick Cadastral Prompts</h4>
+              <div class="quick-prompts-list">
+                <button class="quick-prompt-btn">What is ULPIN Bhu-Aadhaar?</button>
+                <button class="quick-prompt-btn">What is water body setback buffer distance?</button>
+                <button class="quick-prompt-btn">Gaon me kitne houses detect hue hain?</button>
+                <button class="quick-prompt-btn">Protocol for low confidence boundary?</button>
+                <button class="quick-prompt-btn">Mandatory SVAMITVA Property Card attributes?</button>
+              </div>
+            </div>
+
+            <div class="chat-main-panel">
+              <div class="chat-messages-container" id="chatMessages">
+                <div class="chat-bubble bot">
+                  👋 <strong>Namaste! I am AeroSync Cadastral AI Assistant.</strong><br>
+                  You can ask me questions about SVAMITVA guidelines, DoLR land norms, parcel area calculations, water body buffer violations, or property card generation in English or Hindi!
+                </div>
+              </div>
+
+              <div class="chat-input-bar">
+                <input type="text" id="chatInputField" class="chat-input-field" placeholder="Ask anything about land records, ULPIN, or survey results...">
+                <button id="sendChatBtn" class="btn-send-chat">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Property Card Generator -->
+        <div id="view-card" class="dash-view-content">
+          <div class="property-card-wrapper">
+            <div class="card-official-header">
+              <div style="font-size: 1.1rem; color: #666; text-transform: uppercase;">Government of India | Ministry of Panchayati Raj &amp; DoLR</div>
+              <div class="card-emblem-title">SVAMITVA PROPERTY CARD (संपत्ति पत्रक / घरौनी)</div>
+              <div class="card-subtext">Record of Rights Generated via High-Resolution Drone Survey</div>
+            </div>
+
+            <div class="card-grid-details">
+              <div class="card-section-box">
+                <div style="font-weight: bold; border-bottom: 1px solid #ddd; margin-bottom: 6px;">Location &amp; Administrative Details</div>
+                <div><strong>State:</strong> Uttar Pradesh</div>
+                <div><strong>District:</strong> Varanasi</div>
+                <div><strong>Tehsil:</strong> Sadar</div>
+                <div><strong>Village / Mauza:</strong> Kashi Rural (LGD: 260120)</div>
+                <div><strong>Khasra / Khata No:</strong> <span id="card-khasra-val">142/1</span></div>
+              </div>
+
+              <div class="card-section-box">
+                <div style="font-weight: bold; border-bottom: 1px solid #ddd; margin-bottom: 6px;">Ownership &amp; Identification</div>
+                <div><strong>ULPIN (Bhu-Aadhaar):</strong> <span id="card-ulpin-val" style="font-family: monospace; font-weight: bold; color: #028090;">ULPIN-26012-0042</span></div>
+                <div><strong>Primary Owner:</strong> <span id="card-owner-val">Shri Rajesh Kumar Patel</span></div>
+                <div><strong>Category:</strong> Residential Structure</div>
+              </div>
+            </div>
+
+            <div class="card-section-box" style="margin-bottom: 1.5rem;">
+              <div style="font-weight: bold; border-bottom: 1px solid #ddd; margin-bottom: 6px;">Cadastral Measurements</div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div><strong>Built-up Area:</strong> <span id="card-area-val">145.5 sq.m (1566.15 sq.ft)</span></div>
+                <div><strong>Perimeter:</strong> 48.2 meters</div>
+                <div><strong>Geometry Type:</strong> 90° Orthogonalized Polygon</div>
+                <div><strong>AI Confidence:</strong> 96.0% (Verified)</div>
+              </div>
+            </div>
+
+            <div class="card-seal-row">
+              <div>
+                <div style="font-size: 0.85rem; color: #555;">Verification Status:</div>
+                <div id="card-verif-val" style="font-weight: bold; color: #16a34a;">✅ Digitally Verified via AeroSync Drone AI</div>
+              </div>
+
+              <button class="btn-primary" onclick="window.print()">
+                Print Official Property Card 🖨️
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Compliance & Buffer Audit -->
+        <div id="view-compliance" class="dash-view-content">
+          <div style="background: #ffffff; border-radius: var(--radius-xl); padding: 2rem; border: 1px solid var(--slate-200); box-shadow: var(--shadow-lg);">
+            <h3 style="font-size: 1.3rem; margin-bottom: 1rem; color: var(--slate-900);">🛡️ Cadastral Regulatory &amp; Setback Compliance Audit</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+              <div style="background: #fee2e2; border: 1px solid #fca5a5; padding: 1.2rem; border-radius: var(--radius-md);">
+                <h4 style="color: #991b1b; font-weight: 700; margin-bottom: 0.5rem;">🚨 Water Body Buffer Encroachment Alert</h4>
+                <p style="font-size: 0.88rem; color: #7f1d1d;">
+                  Parcel <strong>ULPIN-26012-0045</strong> is located within <strong>8.5 meters</strong> of designated Talab (Water Body). Rural environmental norm requires a minimum <strong>15m buffer</strong>.
+                </p>
+                <div style="margin-top: 0.8rem; font-size: 0.82rem; font-weight: 600; color: #b91c1c;">
+                  Action: Flagged for Revenue Officer Physical Hearing.
+                </div>
+              </div>
+
+              <div style="background: #ecfdf5; border: 1px solid #6ee7b7; padding: 1.2rem; border-radius: var(--radius-md);">
+                <h4 style="color: #065f46; font-weight: 700; margin-bottom: 0.5rem;">✅ Road Right-of-Way Compliance</h4>
+                <p style="font-size: 0.88rem; color: #047857;">
+                  Parcels <strong>ULPIN-26012-0042</strong> and <strong>0043</strong> satisfy mandatory 3-meter setback requirements from the main village road (Class 2).
+                </p>
+                <div style="margin-top: 0.8rem; font-size: 0.82rem; font-weight: 600; color: #059669;">
+                  Status: Full Legal Compliance.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       5. FOOTER
+       ════════════════════════════════════════════════════════════════════════ -->
+  <footer id="contact" class="footer-section">
+    <div class="footer-container">
+      <div>
+        <div class="footer-brand-title">Aero<span>Sync</span></div>
+        <p class="footer-desc">
+          Automated Cadastral Feature Extraction &amp; Land Intelligence Platform for the SVAMITVA Scheme and Department of Land Resources (DoLR), Ministry of Rural Development.
+        </p>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Modules</h4>
+        <ul class="footer-links">
+          <li><a href="#dashboard" class="footer-link">Drone Tiling Engine</a></li>
+          <li><a href="#dashboard" class="footer-link">Attention ResUNet</a></li>
+          <li><a href="#dashboard" class="footer-link">90° Orthogonalization</a></li>
+          <li><a href="#dashboard" class="footer-link">Cadastral RAG / LLM</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Legal &amp; Govt</h4>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">SVAMITVA Scheme</a></li>
+          <li><a href="#" class="footer-link">DoLR PS 26012</a></li>
+          <li><a href="#" class="footer-link">ULPIN Standards</a></li>
+          <li><a href="#" class="footer-link">DILRMP Integration</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-col-title">Resources</h4>
+        <ul class="footer-links">
+          <li><a href="https://github.com/thatvivekhingu/AeroSync" class="footer-link">GitHub Repository</a></li>
+          <li><a href="#" class="footer-link">Model Cards</a></li>
+          <li><a href="#" class="footer-link">Evaluation Suite</a></li>
+          <li><a href="#" class="footer-link">Documentation</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>&copy; 2026 AeroSync — AI Cadastral Land Intelligence. All rights reserved.</div>
+      <div>Designed for Government of India SVAMITVA Initiative</div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
