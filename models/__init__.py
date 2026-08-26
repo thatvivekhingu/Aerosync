@@ -1,4 +1,4 @@
-# AeroSync Models Package — v2.5 Enterprise Grade
+# AeroSync Models Package — v2.6 Enterprise Grade
 # Re-exports all public APIs from sub-modules.
 # Zero breaking changes — all original import paths continue to work.
 
@@ -22,6 +22,9 @@ from .model import (
 
 # Backward-compat aliases
 AeroSyncUNet = AeroSyncAttentionResUNet
+
+# --- UNet++ Architecture ---
+from .unet_plus_plus import AeroSyncUNetPlusPlus
 
 # --- Losses ---
 from .losses import (
@@ -113,6 +116,20 @@ from .indices import (
 from .super_res import CadastralSuperResolutionNet, enhance_drone_patch
 from .xai import CadastralGradCAM, generate_legal_audit_heatmap
 
+# --- Project Vaayu Integrations ---
+from .roof_material import RoofMaterial, RooftopClassifier
+from .solar_tax_engine import (
+    GramPanchayatTaxCalculator,
+    PropertyValuationReport,
+    SolarPotentialCalculator,
+    SolarPotentialReport,
+)
+from .geospatial_pipeline import (
+    GeospatialGridTiler,
+    TileExtent,
+    convert_shapefile_dict_to_geojson,
+)
+
 __all__ = [
     # Constants
     "CLASS_NAMES",
@@ -126,6 +143,7 @@ __all__ = [
     "UpBlockAttention",
     "AeroSyncAttentionResUNet",
     "AeroSyncUNet",
+    "AeroSyncUNetPlusPlus",
     "SpatialAttention",
     "CBAM",
     "DeformableResBlock",
@@ -196,4 +214,14 @@ __all__ = [
     "enhance_drone_patch",
     "CadastralGradCAM",
     "generate_legal_audit_heatmap",
+    # Project Vaayu Extensions
+    "RoofMaterial",
+    "RooftopClassifier",
+    "SolarPotentialCalculator",
+    "SolarPotentialReport",
+    "GramPanchayatTaxCalculator",
+    "PropertyValuationReport",
+    "GeospatialGridTiler",
+    "TileExtent",
+    "convert_shapefile_dict_to_geojson",
 ]
