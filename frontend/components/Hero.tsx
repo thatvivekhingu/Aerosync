@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Play, ShieldCheck, MapPin, Lock, Clock } from "lucide-react";
 
@@ -96,17 +95,20 @@ export default function Hero() {
 
           </div>
 
-          {/* Right Column: Hero Drone Media Graphic */}
+          {/* Right Column: Hero Drone Media Graphic with Video */}
           <div className="lg:col-span-6 relative">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/80 group">
-              <Image
-                src="/hero_drone.jpg"
-                alt="AeroSync Drone Cadastral Mapping"
-                width={800}
-                height={500}
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                poster="/hero_drone.jpg"
                 className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
-                priority
-              />
+              >
+                <source src="/hero_drone_video.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
 
               {/* Floating Overlay Chip */}
               <div className="absolute bottom-5 left-5 bg-slate-950/85 backdrop-blur-md text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2.5 border border-white/20 shadow-xl">
