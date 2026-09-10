@@ -5,6 +5,7 @@ const config: Config = {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./lib/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
@@ -30,21 +31,22 @@ const config: Config = {
           greenery: "#2ec4b6",
           alert: "#e63946",
           verified: "#10b981",
-        }
+        },
       },
       fontFamily: {
         sans: ["var(--font-inter)", "Inter", "sans-serif"],
         heading: ["var(--font-outfit)", "Outfit", "sans-serif"],
       },
       boxShadow: {
-        'glow-primary': '0 4px 20px rgba(2, 128, 144, 0.3)',
-        'glow-emerald': '0 4px 20px rgba(2, 195, 154, 0.3)',
-        'premium': '0 12px 35px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04)',
+        xs: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+        "glow-primary": "0 4px 20px rgba(2, 128, 144, 0.3)",
+        "glow-emerald": "0 4px 20px rgba(2, 195, 154, 0.3)",
+        premium: "0 12px 35px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04)",
       },
       borderRadius: {
-        '2xl': '1.25rem',
-        '3xl': '1.75rem',
-      }
+        "2xl": "1.25rem",
+        "3xl": "1.75rem",
+      },
     },
   },
   plugins: [],

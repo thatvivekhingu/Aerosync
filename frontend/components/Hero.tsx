@@ -2,122 +2,108 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, Play, ShieldCheck, MapPin, Lock, Clock } from "lucide-react";
+import {
+  ArrowRight,
+  ShieldCheck,
+  MapPin,
+  Lock,
+  Scale,
+  CheckCircle2,
+  FileText,
+  Layers,
+  Sparkles,
+  Search,
+  Cpu,
+} from "lucide-react";
+import UnifiedAIStudioHero from "@/components/UnifiedAIStudioHero";
 
 export default function Hero() {
   return (
-    <section id="home" className="relative pt-8 pb-16 md:pt-12 md:pb-20 overflow-hidden">
-      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="home" className="relative pt-8 pb-16 md:pt-12 md:pb-20 overflow-hidden bg-gradient-to-b from-teal-50/40 via-white to-slate-100/60">
+      <div className="max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          
-          {/* Left Column: Content */}
-          <div className="lg:col-span-6 flex flex-col gap-6">
-            
+        {/* Top Header Row */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div className="max-w-3xl space-y-3.5">
             {/* Tag / Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-light text-primary text-xs font-semibold w-fit border border-primary/20">
-              <span className="w-2 h-2 rounded-full bg-teal-accent animate-ping"></span>
-              <span>Problem Statement ID: 26012 | DoLR, Ministry of Rural Development</span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-50 text-teal-800 text-xs font-semibold w-fit border border-teal-200 shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
+              <span>Evidence-First Geospatial Cadastral Intelligence • SIH 2026 PS-26012</span>
             </div>
 
             {/* Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold font-heading text-slate-900 leading-[1.14] tracking-tight">
-              AI-Powered Cadastral Land Intelligence from{" "}
+            <h1 className="text-3xl sm:text-5xl lg:text-[3.4rem] font-black font-heading text-slate-900 leading-[1.12] tracking-tight">
+              Verify land records against the{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#028090] via-[#00a896] to-[#02c39a]">
-                Drone Imagery
+                land itself.
               </span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
-              AeroSync is an end-to-end platform that uses AI, computer vision and geospatial intelligence to generate accurate, reliable and tamper-proof land records from drone data.
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl">
+              AeroSync connects high-resolution drone orthomosaics, parcel geometry, and AI segmentation to extract <strong className="text-teal-700">90° legal boundaries</strong>, detect <strong className="text-rose-600">setback encroachment</strong>, and generate <strong className="text-slate-900">SVAMITVA Property Cards</strong>.
             </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <Link
-                href="#dashboard"
-                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-base font-semibold shadow-glow-primary hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
-              >
-                <span>Explore Platform</span>
-                <ArrowRight size={18} />
-              </Link>
-
-              <a
-                href="#how-it-works"
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-lg bg-transparent hover:bg-primary/5 text-slate-800 border-2 border-primary text-base font-semibold transition-all duration-200"
-              >
-                <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                  <Play size={12} className="fill-primary ml-0.5" />
-                </div>
-                <span>Watch Overview</span>
-              </a>
-            </div>
-
-            {/* 4 Trust Badges */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 pt-6 border-t border-slate-200 mt-4">
-              <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 text-primary flex items-center justify-center flex-shrink-0">
-                  <ShieldCheck size={24} className="stroke-[2.2]" />
-                </div>
-                <span className="text-xs sm:text-sm font-semibold text-slate-700 leading-tight">
-                  Accurate &amp; Reliable
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 text-primary flex items-center justify-center flex-shrink-0">
-                  <MapPin size={24} className="stroke-[2.2]" />
-                </div>
-                <span className="text-xs sm:text-sm font-semibold text-slate-700 leading-tight">
-                  Geospatial Intelligence
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 text-primary flex items-center justify-center flex-shrink-0">
-                  <Lock size={24} className="stroke-[2.2]" />
-                </div>
-                <span className="text-xs sm:text-sm font-semibold text-slate-700 leading-tight">
-                  Secure &amp; Tamper-proof
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 text-primary flex items-center justify-center flex-shrink-0">
-                  <Clock size={24} className="stroke-[2.2]" />
-                </div>
-                <span className="text-xs sm:text-sm font-semibold text-slate-700 leading-tight">
-                  Efficient &amp; Scalable
-                </span>
-              </div>
-            </div>
-
           </div>
 
-          {/* Right Column: Hero Drone Media Graphic with Video */}
-          <div className="lg:col-span-6 relative">
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/80 group">
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                poster="/hero_drone.jpg"
-                className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
-              >
-                <source src="/hero_drone_video.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+          {/* CTA Buttons */}
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <Link
+              href="/register"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all duration-200"
+            >
+              <Search size={15} className="text-teal-400" />
+              <span>Verify a Property Free</span>
+              <ArrowRight size={15} />
+            </Link>
 
-              {/* Floating Overlay Chip */}
-              <div className="absolute bottom-5 left-5 bg-slate-950/85 backdrop-blur-md text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2.5 border border-white/20 shadow-xl">
-                <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] pulse-dot"></div>
-                <span>SVAMITVA AI Engine Online • 44 Tests Validated</span>
-              </div>
+            <Link
+              href="/models"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-teal-50 text-slate-800 border border-slate-300 hover:border-teal-300 text-xs sm:text-sm font-bold transition-all duration-200 shadow-xs"
+            >
+              <Cpu size={15} className="text-teal-600" />
+              <span>Full AI Studio Suite</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* ── UNIFIED AI MODEL STUDIO EMBEDDED IN HERO ── */}
+        <div className="relative z-10">
+          <UnifiedAIStudioHero />
+        </div>
+
+        {/* 4 Trust & Evidence Badges */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-3 border-t border-slate-200 text-xs">
+          <div className="flex items-start gap-2.5">
+            <ShieldCheck size={20} className="text-teal-600 shrink-0 mt-0.5" />
+            <div>
+              <strong className="block text-slate-900 font-bold">Evidence-First</strong>
+              <span className="text-slate-500 text-xs">Inspectable OCR &amp; vectors</span>
             </div>
           </div>
 
+          <div className="flex items-start gap-2.5">
+            <Scale size={20} className="text-teal-600 shrink-0 mt-0.5" />
+            <div>
+              <strong className="block text-slate-900 font-bold">Tolerance Math</strong>
+              <span className="text-slate-500 text-xs">±3.0% statutory surveying margin</span>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-2.5">
+            <Layers size={20} className="text-teal-600 shrink-0 mt-0.5" />
+            <div>
+              <strong className="block text-slate-900 font-bold">Sub-Centimeter GSD</strong>
+              <span className="text-slate-500 text-xs">90° Orthogonal boundary plinths</span>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-2.5">
+            <Lock size={20} className="text-teal-600 shrink-0 mt-0.5" />
+            <div>
+              <strong className="block text-slate-900 font-bold">Section 65B</strong>
+              <span className="text-slate-500 text-xs">Court-admissible tamper logs</span>
+            </div>
+          </div>
         </div>
 
       </div>

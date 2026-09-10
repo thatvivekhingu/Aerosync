@@ -1,8 +1,8 @@
+@import 'mapbox-gl/dist/mapbox-gl.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import 'mapbox-gl/dist/mapbox-gl.css';
 
 :root {
   --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -10,12 +10,16 @@
 }
 
 body {
-  background-color: #f8fbfa;
   color: #1e293b;
+  background-color: #f8fafc;
   font-family: var(--font-inter);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
+
+/* Dark page scrollbar */
+.dark ::-webkit-scrollbar-track { background: #0a1929; }
+.dark ::-webkit-scrollbar-thumb { background: #1e3a52; }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-outfit);
@@ -59,4 +63,13 @@ h1, h2, h3, h4, h5, h6 {
 
 .pulse-dot {
   animation: pulseGlow 2s infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out forwards;
 }

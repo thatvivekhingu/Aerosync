@@ -130,7 +130,49 @@ from .geospatial_pipeline import (
     convert_shapefile_dict_to_geojson,
 )
 
+# --- Satellite & Aerial Deep Learning Techniques (Techniques Suite) ---
+from .farseg import (
+    ConvBNReLU,
+    FSRelationModule,
+    FarSeg,
+    SimpleBackboneEncoder,
+)
+from .oriented_detector import (
+    OrientedBox,
+    OrientedCadastralDetector,
+)
+from .pansharpen import (
+    CadastralPanSharpenNet,
+    compute_ergas,
+    compute_spectral_angle_mapper,
+)
+from .cloud_removal import (
+    CloudClass,
+    CloudShadowNet,
+)
+from .geo_foundation import (
+    GeoFoundationViT,
+    PatchEmbedding,
+    RemoteSensingEmbedder,
+    TransformerEncoderBlock,
+)
+
+# --- Unified Master Dual-Engine Architectures ---
+from .unified import (
+    UnifiedAeroSyncDroneEngine,
+    UnifiedSatelliteFoundationEngine,
+)
+
+# Aliases
+AeroSyncDroneMasterModel = UnifiedAeroSyncDroneEngine
+AeroSyncSatelliteMasterModel = UnifiedSatelliteFoundationEngine
+
 __all__ = [
+    # Unified 2-Engine Architectures
+    "UnifiedAeroSyncDroneEngine",
+    "UnifiedSatelliteFoundationEngine",
+    "AeroSyncDroneMasterModel",
+    "AeroSyncSatelliteMasterModel",
     # Constants
     "CLASS_NAMES",
     "CLASS_COLORS",
@@ -224,4 +266,20 @@ __all__ = [
     "GeospatialGridTiler",
     "TileExtent",
     "convert_shapefile_dict_to_geojson",
+    # Techniques Suite Models
+    "FarSeg",
+    "FSRelationModule",
+    "SimpleBackboneEncoder",
+    "ConvBNReLU",
+    "OrientedBox",
+    "OrientedCadastralDetector",
+    "CadastralPanSharpenNet",
+    "compute_spectral_angle_mapper",
+    "compute_ergas",
+    "CloudClass",
+    "CloudShadowNet",
+    "GeoFoundationViT",
+    "PatchEmbedding",
+    "TransformerEncoderBlock",
+    "RemoteSensingEmbedder",
 ]

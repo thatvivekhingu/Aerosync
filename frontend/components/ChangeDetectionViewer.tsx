@@ -45,7 +45,7 @@ export default function ChangeDetectionViewer() {
             <div
               className="absolute inset-0 bg-cover bg-center"
               style={{
-                backgroundImage: "url('/hero_drone.jpg')",
+                backgroundImage: "url('/inference/patch_100_orig.png')",
                 filter: "brightness(0.9) contrast(1.05)",
               }}
             >
@@ -59,7 +59,7 @@ export default function ChangeDetectionViewer() {
               className="absolute inset-0 bg-cover bg-center overflow-hidden"
               style={{
                 clipPath: `polygon(${sliderPos}% 0, 100% 0, 100% 100%, ${sliderPos}% 100%)`,
-                backgroundImage: "url('/hero_drone.jpg')",
+                backgroundImage: "url('/inference/patch_100_t2_mutated.png')",
                 filter: "brightness(1.05) contrast(1.1)",
               }}
             >

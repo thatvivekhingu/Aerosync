@@ -1,5 +1,23 @@
+export interface DirectionBoundaryInfo {
+  lengthM: number;
+  bearingDeg: number;
+  cardinal: "North" | "East" | "South" | "West";
+  abutting: string;
+  status: "CLEAN" | "CONFLICT" | "ENCROACHMENT";
+  notes?: string;
+}
+
+export interface BoundaryConflictAlert {
+  type: "OVERLAP" | "ROAD_BUFFER_VIOLATION" | "WATER_BUFFER_ENCROACHMENT" | "UNCLEAR_BOUNDARY";
+  severity: "CRITICAL" | "WARNING" | "RESOLVED";
+  description: string;
+  statutoryBufferM?: number;
+  actualClearanceM?: number;
+}
+
 export interface CadastralParcel {
   id: string;
+  propertyId: string; // SIH Format: GJ-2026-00125
   ulpin: string;
   owner: string;
   category: string;
@@ -17,6 +35,18 @@ export interface CadastralParcel {
   district: string;
   state: string;
   khasra: string;
+  realDroneImage: string;
+  cadastralOverlayImage?: string;
+  orthogonalizationScore: number; // e.g. 99.2%
+  uncertaintyScore: number; // Monte Carlo Dropout uncertainty (0.0 to 1.0)
+  surveyPriority: "NORMAL" | "HIGH" | "URGENT";
+  directionBoundaries: {
+    north: DirectionBoundaryInfo;
+    east: DirectionBoundaryInfo;
+    south: DirectionBoundaryInfo;
+    west: DirectionBoundaryInfo;
+  };
+  conflictAlert?: BoundaryConflictAlert;
   roofType?: "RCC (Pakka)" | "Tiled (Khaprail)" | "Tin Sheet" | "Thatch (Kachha)" | "N/A";
   solarCapacityKwp?: number;
   solarAnnualGenKwh?: number;
@@ -28,8 +58,9 @@ export interface CadastralParcel {
 export const CADASTRAL_PARCELS: CadastralParcel[] = [
   {
     id: "P1",
-    ulpin: "ULPIN-26012-0042",
-    owner: "Shri Rajesh Kumar Patel",
+    propertyId: "GJ-2026-00125",
+    ulpin: "UP-VN-48-0042-00001",
+    owner: "Shri Ramesh Patel",
     category: "Residential Building (Class 1)",
     classId: 1,
     areaSqm: 145.5,
@@ -47,10 +78,49 @@ export const CADASTRAL_PARCELS: CadastralParcel[] = [
       [82.9730, 25.3170]
     ],
     centroid: [82.9736, 25.3176],
-    village: "Kashi Rural",
+    village: "Sevapuri (Kashi Rural)",
     district: "Varanasi",
     state: "Uttar Pradesh",
     khasra: "142/1",
+    realDroneImage: "/inference/patch_100_orig.png",
+    cadastralOverlayImage: "/inference/patch_100_cadastral_overlay.png",
+    orthogonalizationScore: 99.4,
+    uncertaintyScore: 0.04,
+    surveyPriority: "NORMAL",
+    directionBoundaries: {
+      north: {
+        lengthM: 12.1,
+        bearingDeg: 0,
+        cardinal: "North",
+        abutting: "Gram Panchayat Paved Road (6m RoW)",
+        status: "CLEAN",
+        notes: "Legal 3.2m road setback maintained; compliant with DoLR norms"
+      },
+      east: {
+        lengthM: 12.0,
+        bearingDeg: 90,
+        cardinal: "East",
+        abutting: "Parcel #GJ-2026-00126 (Smt. Sunita Devi)",
+        status: "CLEAN",
+        notes: "Shared boundary orthogonalized at 90.0°"
+      },
+      south: {
+        lengthM: 12.1,
+        bearingDeg: 180,
+        cardinal: "South",
+        abutting: "Agricultural Plot (Khasra 143/2)",
+        status: "CLEAN",
+        notes: "Physical ridge boundary verified via drone elevation"
+      },
+      west: {
+        lengthM: 12.0,
+        bearingDeg: 270,
+        cardinal: "West",
+        abutting: "Public Drainage & Common Pathway",
+        status: "CLEAN",
+        notes: "Clear 1.5m buffer from village storm drainage"
+      }
+    },
     roofType: "RCC (Pakka)",
     solarCapacityKwp: 15.6,
     solarAnnualGenKwh: 22620,
@@ -60,7 +130,8 @@ export const CADASTRAL_PARCELS: CadastralParcel[] = [
   },
   {
     id: "P2",
-    ulpin: "ULPIN-26012-0043",
+    propertyId: "GJ-2026-00126",
+    ulpin: "UP-LK-31-0018-00001",
     owner: "Smt. Sunita Devi & Rameshwar Patel",
     category: "Commercial / Kirana Store (Class 1)",
     classId: 1,
@@ -79,10 +150,49 @@ export const CADASTRAL_PARCELS: CadastralParcel[] = [
       [82.9748, 25.3170]
     ],
     centroid: [82.9753, 25.31745],
-    village: "Kashi Rural",
-    district: "Varanasi",
+    village: "Malihabad",
+    district: "Lucknow",
     state: "Uttar Pradesh",
     khasra: "142/2",
+    realDroneImage: "/inference/patch_105_orig.png",
+    cadastralOverlayImage: "/inference/patch_105_cadastral_overlay.png",
+    orthogonalizationScore: 98.8,
+    uncertaintyScore: 0.08,
+    surveyPriority: "NORMAL",
+    directionBoundaries: {
+      north: {
+        lengthM: 9.8,
+        bearingDeg: 0,
+        cardinal: "North",
+        abutting: "Gram Panchayat Paved Road",
+        status: "CLEAN",
+        notes: "Frontage clear of roadway"
+      },
+      east: {
+        lengthM: 9.0,
+        bearingDeg: 90,
+        cardinal: "East",
+        abutting: "Open Common Land (Gram Sabha)",
+        status: "CLEAN",
+        notes: "No conflicting private claim"
+      },
+      south: {
+        lengthM: 9.8,
+        bearingDeg: 180,
+        cardinal: "South",
+        abutting: "Agricultural Plot (Khasra 143/3)",
+        status: "CLEAN",
+        notes: "Clear agricultural plinth demarcation"
+      },
+      west: {
+        lengthM: 9.0,
+        bearingDeg: 270,
+        cardinal: "West",
+        abutting: "Parcel #GJ-2026-00125 (Ramesh Patel)",
+        status: "CLEAN",
+        notes: "Aligned with adjoining parcel corner"
+      }
+    },
     roofType: "Tin Sheet",
     solarCapacityKwp: 10.7,
     solarAnnualGenKwh: 15515,
@@ -92,7 +202,8 @@ export const CADASTRAL_PARCELS: CadastralParcel[] = [
   },
   {
     id: "P3",
-    ulpin: "ULPIN-26012-0044",
+    propertyId: "GJ-2026-00127",
+    ulpin: "UP-PY-55-0067-00001",
     owner: "Gram Sabha Community",
     category: "Village Water Body / Talab (Class 3)",
     classId: 3,
@@ -111,15 +222,55 @@ export const CADASTRAL_PARCELS: CadastralParcel[] = [
       [82.9765, 25.3172]
     ],
     centroid: [82.9775, 25.3180],
-    village: "Kashi Rural",
-    district: "Varanasi",
+    village: "Jhunsi",
+    district: "Prayagraj",
     state: "Uttar Pradesh",
     khasra: "145 (Talab)",
+    realDroneImage: "/inference/patch_106_orig.png",
+    cadastralOverlayImage: "/inference/patch_106_cadastral_overlay.png",
+    orthogonalizationScore: 97.2,
+    uncertaintyScore: 0.01,
+    surveyPriority: "NORMAL",
+    directionBoundaries: {
+      north: {
+        lengthM: 21.6,
+        bearingDeg: 0,
+        cardinal: "North",
+        abutting: "Buffer Zone / Water Inflow Channel",
+        status: "CLEAN",
+        notes: "15m statutory green buffer zone intact"
+      },
+      east: {
+        lengthM: 21.6,
+        bearingDeg: 90,
+        cardinal: "East",
+        abutting: "Gram Panchayat Pasture Land (Charagah)",
+        status: "CLEAN",
+        notes: "Public grazing land boundary marked"
+      },
+      south: {
+        lengthM: 21.6,
+        bearingDeg: 180,
+        cardinal: "South",
+        abutting: "Connecting Road Embankment",
+        status: "CLEAN",
+        notes: "Embankment bund reinforced"
+      },
+      west: {
+        lengthM: 21.6,
+        bearingDeg: 270,
+        cardinal: "West",
+        abutting: "Abadi Village Settlement Boundary",
+        status: "CLEAN",
+        notes: "Buffer boundary monitored by AI RAG compliance engine"
+      }
+    },
     roofType: "N/A"
   },
   {
     id: "P4",
-    ulpin: "ULPIN-26012-0045",
+    propertyId: "GJ-2026-00128",
+    ulpin: "UP-GK-27-0011-00001",
     owner: "Public Works Dept (Gram Panchayat Road)",
     category: "Public Thoroughfare / Road (Class 2)",
     classId: 2,
@@ -138,15 +289,55 @@ export const CADASTRAL_PARCELS: CadastralParcel[] = [
       [82.9725, 25.3164]
     ],
     centroid: [82.9757, 25.31665],
-    village: "Kashi Rural",
-    district: "Varanasi",
+    village: "Pipraich",
+    district: "Gorakhpur",
     state: "Uttar Pradesh",
     khasra: "140 (Marg)",
+    realDroneImage: "/inference/patch_109_orig.png",
+    cadastralOverlayImage: "/inference/patch_109_cadastral_overlay.png",
+    orthogonalizationScore: 99.6,
+    uncertaintyScore: 0.03,
+    surveyPriority: "NORMAL",
+    directionBoundaries: {
+      north: {
+        lengthM: 52.0,
+        bearingDeg: 0,
+        cardinal: "North",
+        abutting: "Residential Plots P1, P2 Frontages",
+        status: "CLEAN",
+        notes: "Full statutory width 5.5m preserved"
+      },
+      east: {
+        lengthM: 4.0,
+        bearingDeg: 90,
+        cardinal: "East",
+        abutting: "Inter-village Link Road Junction",
+        status: "CLEAN",
+        notes: "Major junction feeder"
+      },
+      south: {
+        lengthM: 52.0,
+        bearingDeg: 180,
+        cardinal: "South",
+        abutting: "Southern Agricultural Sector",
+        status: "CLEAN",
+        notes: "Clear ditch and berm separation"
+      },
+      west: {
+        lengthM: 4.0,
+        bearingDeg: 270,
+        cardinal: "West",
+        abutting: "Village Entry Gate (Abadi Boundary)",
+        status: "CLEAN",
+        notes: "Survey base station marker present"
+      }
+    },
     roofType: "N/A"
   },
   {
     id: "P5",
-    ulpin: "ULPIN-26012-0046",
+    propertyId: "GJ-2026-00129",
+    ulpin: "UP-VN-48-0046-00001",
     owner: "Shri Mahendra Singh & Brothers",
     category: "Residential / Courtyard (Class 1)",
     classId: 1,
@@ -165,10 +356,56 @@ export const CADASTRAL_PARCELS: CadastralParcel[] = [
       [82.9732, 25.3185]
     ],
     centroid: [82.9736, 25.3189],
-    village: "Kashi Rural",
+    village: "Sevapuri (Kashi Rural)",
     district: "Varanasi",
     state: "Uttar Pradesh",
     khasra: "142/3",
+    realDroneImage: "/inference/patch_100_orig.png",
+    cadastralOverlayImage: "/inference/patch_100_cadastral_overlay.png",
+    orthogonalizationScore: 88.4,
+    uncertaintyScore: 0.32,
+    surveyPriority: "URGENT",
+    conflictAlert: {
+      type: "ROAD_BUFFER_VIOLATION",
+      severity: "CRITICAL",
+      description: "North-West eaves encroach 1.2m into Village Road statutory buffer (1.8m clearance vs 3.0m required).",
+      statutoryBufferM: 3.0,
+      actualClearanceM: 1.8
+    },
+    directionBoundaries: {
+      north: {
+        lengthM: 8.2,
+        bearingDeg: 0,
+        cardinal: "North",
+        abutting: "Village Pathway / Marg",
+        status: "CONFLICT",
+        notes: "CRITICAL: Eaves encroach into 3m legal road buffer zone (1.8m actual)"
+      },
+      east: {
+        lengthM: 8.0,
+        bearingDeg: 90,
+        cardinal: "East",
+        abutting: "Abutting Wall of Khasra 142/4",
+        status: "CONFLICT",
+        notes: "Boundary angle 84.5° instead of 90° - tree shadow occlusion detected"
+      },
+      south: {
+        lengthM: 8.2,
+        bearingDeg: 180,
+        cardinal: "South",
+        abutting: "Internal Courtyard (Shared Family)",
+        status: "CLEAN",
+        notes: "Unambiguous partition wall"
+      },
+      west: {
+        lengthM: 8.0,
+        bearingDeg: 270,
+        cardinal: "West",
+        abutting: "Open Drainage Alley",
+        status: "CLEAN",
+        notes: "Clear physical boundary line"
+      }
+    },
     roofType: "Tiled (Khaprail)",
     solarCapacityKwp: 4.6,
     solarAnnualGenKwh: 6670,

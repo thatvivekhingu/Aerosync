@@ -1,0 +1,202 @@
+[
+  {
+    "id": "drone_aerial_property_mapping",
+    "filename": "drone_aerial_property_mapping.jpg",
+    "village": "Peri-Urban Master Cadastre (15 Individual Buildings & 4 Pools)",
+    "ulpin": "GJ-2026-00125-00081",
+    "owner": "15 Distinct Parcel Footprints (Survey of India / SVAMITVA Standard)",
+    "khasra": "124/3A to 124/3K (Subdivided Cadastre)",
+    "area_sqm": 5887.0,
+    "predicted_roof": "Slate, Terracotta, Solar PV & RCC (15 Buildings)",
+    "raw_roof_material": "MULTI_ROOF_COMPOSITE",
+    "roof_confidence": 99.4,
+    "solar": {
+      "capacity_kwp": 228.7,
+      "usable_solar_area_sqm": 2650.0,
+      "annual_generation_kwh": 215325.0,
+      "annual_savings_inr": 2058300.0,
+      "annual_co2_savings_kg": 176566.0,
+      "suitability_rating": "OPTIMAL / MULTI-ROOF SOLAR",
+      "pm_surya_ghar_eligible": true
+    },
+    "tax": {
+      "asset_valuation_inr": 76531000.0,
+      "annual_tax_inr": 114796.0,
+      "construction_type": "MULTI_CLASS_ESTATE",
+      "circle_rate_per_sqm": 12500.0,
+      "tax_bracket": "CLASS_A_RESIDENTIAL"
+    },
+    "images": {
+      "original": "/inference/drone_aerial_property_mapping.jpg",
+      "cadastral_overlay": "/inference/drone_aerial_property_mapping_cadastral_overlay.png",
+      "unetpp_mask": "/inference/drone_aerial_property_mapping_unetpp_mask.png",
+      "gradcam": "/inference/drone_aerial_property_mapping_gradcam.png",
+      "vari": "/inference/drone_aerial_property_mapping_vari.png",
+      "gli": "/inference/drone_aerial_property_mapping_gli.png",
+      "ndwi": "/inference/drone_aerial_property_mapping_ndwi.png",
+      "shadow_plinth": "/inference/drone_aerial_property_mapping_shadow.png",
+      "t2_mutated": "/inference/drone_aerial_property_mapping_t2_mutated.png",
+      "change_detection": "/inference/drone_aerial_property_mapping_change_detection.png"
+    }
+  },
+  {
+    "id": "patch_100",
+    "filename": "patch_100.png",
+    "village": "Sevapuri, Varanasi",
+    "ulpin": "UP-VN-48-0042-00001",
+    "owner": "Ramesh Kumar Yadav",
+    "khasra": "42/1A",
+    "area_sqm": 142.5,
+    "predicted_roof": "RCC (Pakka)",
+    "raw_roof_material": "RCC_CONCRETE",
+    "roof_confidence": 92.0,
+    "solar": {
+      "capacity_kwp": 15.27,
+      "usable_solar_area_sqm": 106.88,
+      "annual_generation_kwh": 22138.4,
+      "annual_savings_inr": 137258.04,
+      "annual_co2_savings_kg": 18153.5,
+      "suitability_rating": "EXCELLENT",
+      "pm_surya_ghar_eligible": true
+    },
+    "tax": {
+      "asset_valuation_inr": 1781250.0,
+      "annual_tax_inr": 2671.88,
+      "construction_type": "RCC_CONCRETE",
+      "circle_rate_per_sqm": 12500.0,
+      "tax_bracket": "CLASS_B_RESIDENTIAL"
+    },
+    "images": {
+      "original": "/inference/patch_100_orig.png",
+      "cadastral_overlay": "/inference/patch_100_cadastral_overlay.png",
+      "unetpp_mask": "/inference/patch_100_unetpp_mask.png",
+      "gradcam": "/inference/patch_100_gradcam.png",
+      "vari": "/inference/patch_100_vari.png",
+      "gli": "/inference/patch_100_gli.png",
+      "ndwi": "/inference/patch_100_ndwi.png",
+      "shadow_plinth": "/inference/patch_100_shadow.png",
+      "t2_mutated": "/inference/patch_100_t2_mutated.png",
+      "change_detection": "/inference/patch_100_change_detection.png"
+    }
+  },
+  {
+    "id": "patch_105",
+    "filename": "patch_105.png",
+    "village": "Malihabad, Lucknow",
+    "ulpin": "UP-LK-31-0018-00001",
+    "owner": "Preeti Singh Rawat",
+    "khasra": "18/5",
+    "area_sqm": 96.0,
+    "predicted_roof": "Thatch (Kachha)",
+    "raw_roof_material": "THATCH_KACHHA",
+    "roof_confidence": 88.0,
+    "solar": {
+      "capacity_kwp": 0.0,
+      "usable_solar_area_sqm": 0.0,
+      "annual_generation_kwh": 0.0,
+      "annual_savings_inr": 0.0,
+      "annual_co2_savings_kg": 0.0,
+      "suitability_rating": "LOW / UNSUITABLE",
+      "pm_surya_ghar_eligible": false
+    },
+    "tax": {
+      "asset_valuation_inr": 240000.0,
+      "annual_tax_inr": 360.0,
+      "construction_type": "THATCH_KACHHA",
+      "circle_rate_per_sqm": 2500.0,
+      "tax_bracket": "CLASS_C_RURAL_AFFORDABLE"
+    },
+    "images": {
+      "original": "/inference/patch_105_orig.png",
+      "cadastral_overlay": "/inference/patch_105_cadastral_overlay.png",
+      "unetpp_mask": "/inference/patch_105_unetpp_mask.png",
+      "gradcam": "/inference/patch_105_gradcam.png",
+      "vari": "/inference/patch_105_vari.png",
+      "gli": "/inference/patch_105_gli.png",
+      "ndwi": "/inference/patch_105_ndwi.png",
+      "shadow_plinth": "/inference/patch_105_shadow.png",
+      "t2_mutated": "/inference/patch_105_t2_mutated.png",
+      "change_detection": "/inference/patch_105_change_detection.png"
+    }
+  },
+  {
+    "id": "patch_106",
+    "filename": "patch_106.png",
+    "village": "Jhunsi, Prayagraj",
+    "ulpin": "UP-PY-55-0067-00001",
+    "owner": "Abdul Rahman Khan",
+    "khasra": "67/3",
+    "area_sqm": 210.0,
+    "predicted_roof": "RCC (Pakka)",
+    "raw_roof_material": "RCC_CONCRETE",
+    "roof_confidence": 92.0,
+    "solar": {
+      "capacity_kwp": 22.5,
+      "usable_solar_area_sqm": 157.5,
+      "annual_generation_kwh": 32625.0,
+      "annual_savings_inr": 202275.0,
+      "annual_co2_savings_kg": 26752.5,
+      "suitability_rating": "EXCELLENT",
+      "pm_surya_ghar_eligible": true
+    },
+    "tax": {
+      "asset_valuation_inr": 2625000.0,
+      "annual_tax_inr": 3937.5,
+      "construction_type": "RCC_CONCRETE",
+      "circle_rate_per_sqm": 12500.0,
+      "tax_bracket": "CLASS_A_RESIDENTIAL"
+    },
+    "images": {
+      "original": "/inference/patch_106_orig.png",
+      "cadastral_overlay": "/inference/patch_106_cadastral_overlay.png",
+      "unetpp_mask": "/inference/patch_106_unetpp_mask.png",
+      "gradcam": "/inference/patch_106_gradcam.png",
+      "vari": "/inference/patch_106_vari.png",
+      "gli": "/inference/patch_106_gli.png",
+      "ndwi": "/inference/patch_106_ndwi.png",
+      "shadow_plinth": "/inference/patch_106_shadow.png",
+      "t2_mutated": "/inference/patch_106_t2_mutated.png",
+      "change_detection": "/inference/patch_106_change_detection.png"
+    }
+  },
+  {
+    "id": "patch_109",
+    "filename": "patch_109.png",
+    "village": "Pipraich, Gorakhpur",
+    "ulpin": "UP-GK-27-0011-00001",
+    "owner": "Savitri Devi Maurya",
+    "khasra": "11/1A",
+    "area_sqm": 88.5,
+    "predicted_roof": "RCC (Pakka)",
+    "raw_roof_material": "RCC_CONCRETE",
+    "roof_confidence": 92.0,
+    "solar": {
+      "capacity_kwp": 9.48,
+      "usable_solar_area_sqm": 66.38,
+      "annual_generation_kwh": 13749.1,
+      "annual_savings_inr": 85244.46,
+      "annual_co2_savings_kg": 11274.3,
+      "suitability_rating": "EXCELLENT",
+      "pm_surya_ghar_eligible": true
+    },
+    "tax": {
+      "asset_valuation_inr": 1106250.0,
+      "annual_tax_inr": 1659.38,
+      "construction_type": "RCC_CONCRETE",
+      "circle_rate_per_sqm": 12500.0,
+      "tax_bracket": "CLASS_B_RESIDENTIAL"
+    },
+    "images": {
+      "original": "/inference/patch_109_orig.png",
+      "cadastral_overlay": "/inference/patch_109_cadastral_overlay.png",
+      "unetpp_mask": "/inference/patch_109_unetpp_mask.png",
+      "gradcam": "/inference/patch_109_gradcam.png",
+      "vari": "/inference/patch_109_vari.png",
+      "gli": "/inference/patch_109_gli.png",
+      "ndwi": "/inference/patch_109_ndwi.png",
+      "shadow_plinth": "/inference/patch_109_shadow.png",
+      "t2_mutated": "/inference/patch_109_t2_mutated.png",
+      "change_detection": "/inference/patch_109_change_detection.png"
+    }
+  }
+]
