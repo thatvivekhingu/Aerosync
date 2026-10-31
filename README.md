@@ -312,7 +312,14 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to access th
 * 🇮🇳 **National Scale (6.6 Lakh Villages)**: Purpose-built to power the Government of India's SVAMITVA and DILRMP land modernization missions.
 
 ---
+## 🛠️ Troubleshooting
 
+### Python dependency errors
+Upgrade pip before installing dependencies:
+
+```bash
+python -m pip install --upgrade pip
+pip install -r requirements.txt
 ## 👥 Team Acknowledgments & License
 
 * **Initiative**: [Smart India Hackathon 2026 (SIH 2026)](https://www.sih.gov.in/)
